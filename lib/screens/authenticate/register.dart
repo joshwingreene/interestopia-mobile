@@ -12,6 +12,7 @@ class _RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
 
   // text field state
+  String firstLastName = '';
   String email = '';
   String password = '';
 
@@ -32,6 +33,19 @@ class _RegisterState extends State<Register> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              TextFormField(
+                  validator: (val) => val.isEmpty ? 'Enter your first and last name' : null,
+                  onChanged: (val) {
+                    setState(() => firstLastName = val);
+                  },
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Full Name',
+                  )
+              ),
+              SizedBox(
+                  height: 50
+              ),
               TextFormField(
                   validator: (val) => val.isEmpty ? 'Enter an email' : null,
                   onChanged: (val) {
@@ -57,7 +71,14 @@ class _RegisterState extends State<Register> {
                   )
               ),
               SizedBox(
-                  height: 50
+                  height: 25
+              ),
+              Text(
+                  error,
+                  style: TextStyle(color: Colors.red, fontSize: 14.0)
+              ),
+              SizedBox(
+                  height: 25
               ),
               RaisedButton(
                   color: Colors.deepPurpleAccent,
@@ -71,20 +92,18 @@ class _RegisterState extends State<Register> {
                       }
                     }
                   },
-                  child: Container(
-                      child: Text(
-                          'Register',
-                          style: TextStyle(color: Colors.white)
-                      )
+                  child: Text(
+                      'Register',
+                      style: TextStyle(color: Colors.white)
                   )
               ),
               SizedBox(
-                height: 12
+                  height: 10
               ),
-              Text(
-                error,
-                style: TextStyle(color: Colors.red, fontSize: 14.0)
-              )
+              FlatButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Cancel')
+              ),
             ],
           ),
         ),
