@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:interestopia/models/user.dart';
+import 'package:interestopia/screens/wrapper.dart';
+import 'package:interestopia/services/auth.dart';
+import 'package:provider/provider.dart';
 
 void main() => runApp(Interestopia());
 
 /// This Widget is the main application widget.
 class Interestopia extends StatelessWidget {
-  static const String _title = 'Flutter Code Sample';
+  //static const String _title = 'Interestopia';
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: _title,
-      home: MyStatefulWidget(),
+    return StreamProvider<User>.value(
+      value: AuthService().user,
+      child: MaterialApp( // all of the descendant widgets can now access the data provided by StreamProvider
+        home: Wrapper(),
+      ),
     );
   }
 }
 
+/* (Initial Bottom tab code)
 class MyStatefulWidget extends StatefulWidget {
   MyStatefulWidget({Key key}) : super(key: key);
 
@@ -78,5 +85,5 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     );
   }
 }
-
+*/
 
