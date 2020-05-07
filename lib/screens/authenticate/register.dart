@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:interestopia/services/auth.dart';
+import 'package:interestopia/shared/loading.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -17,10 +18,11 @@ class _RegisterState extends State<Register> {
   String password = '';
 
   String error = '';
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading ? Loading() : Scaffold(
       appBar: AppBar(
           backgroundColor: Colors.deepPurpleAccent,
           title: Text('Join Interestopia')
@@ -84,9 +86,13 @@ class _RegisterState extends State<Register> {
                   color: Colors.deepPurpleAccent,
                   onPressed: () async {
                     if (_formKey.currentState.validate()) { // will only be valid if the above validate properties receive a value of null
+                      setState(() => loading = true);
                       dynamic result = await _auth.registerWithEmailAndPassword(email, password);
                       if (result == null) {
-                        setState(() => error = 'please supply a valid email');
+                        setState(() {
+                          error = 'please supply a valid email';
+                          loading = false;
+                        });
                       } else {
                         Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false); // think this will do the job -  https://stackoverflow.com/questions/52048101/how-to-reset-the-base-route-in-my-flutter-app-that-is-pop-any-routes-and-repla
                       }
