@@ -13,7 +13,7 @@ class _RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
 
   // text field state
-  String firstLastName = '';
+  String name = '';
   String email = '';
   String password = '';
 
@@ -36,13 +36,13 @@ class _RegisterState extends State<Register> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               TextFormField(
-                  validator: (val) => val.isEmpty ? 'Enter your first and last name' : null,
+                  validator: (val) => val.isEmpty ? 'Enter your name' : null,
                   onChanged: (val) {
-                    setState(() => firstLastName = val);
+                    setState(() => name = val);
                   },
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: 'Full Name',
+                    labelText: 'Name',
                   )
               ),
               SizedBox(
@@ -87,7 +87,7 @@ class _RegisterState extends State<Register> {
                   onPressed: () async {
                     if (_formKey.currentState.validate()) { // will only be valid if the above validate properties receive a value of null
                       setState(() => loading = true);
-                      dynamic result = await _auth.registerWithEmailAndPassword(email, password);
+                      dynamic result = await _auth.registerWithNameEmailAndPassword(name, email, password);
                       if (result == null) {
                         setState(() {
                           error = 'please supply a valid email';

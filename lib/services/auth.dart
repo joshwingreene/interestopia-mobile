@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:interestopia/models/user.dart';
+import 'package:interestopia/services/database.dart';
 
 class AuthService {
 
@@ -45,10 +46,13 @@ class AuthService {
   }
 
   // register with email and password
-  Future registerWithEmailAndPassword(String email, String password) async {
+  Future registerWithNameEmailAndPassword(String name, String email, String password) async {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       FirebaseUser user = result.user;
+
+      // create a new document for the user with the uid
+      await DatabaseService(uid: user.uid).updateUserData(name);
       return _userFromFirebaseUser(user);
     } catch(e) {
       print(e.toString());
