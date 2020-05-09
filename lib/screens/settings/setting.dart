@@ -78,6 +78,56 @@ class _SettingsState extends State<Settings> {
                           title: Text(userData.name),
                           trailing: Icon(Icons.arrow_forward_ios),
                         ),
+                      ),
+                      SizedBox(
+                        height: 20
+                      ),
+                      RaisedButton(
+                        color: Colors.deepPurpleAccent,
+                        onPressed: () {
+                          DatabaseService(uid: userData.uid).postNewSavedItem(
+                              'The Cost of Javascript Frameworks - Web Performance Consulting',
+                              DateTime.now(),
+                              '',
+                              'Technology');
+                          DatabaseService(uid: userData.uid).postNewSavedItem(
+                              'Most College Graduates Wish They Majored in Something Different',
+                              DateTime.now(),
+                              'Three out of five college graduates say they should have majored in something different and would go back and change their field of study',
+                              'Education');
+                          DatabaseService(uid: userData.uid).postNewSavedItem(
+                              'Opinion | Black Britons Know Why Meghan Markle Wants Out',
+                              DateTime.now(),
+                              'It\’s the racism.',
+                              'Goverment');
+                          DatabaseService(uid: userData.uid).postNewSavedItem(
+                              '8 tips for more productive meetings',
+                              DateTime.now(),
+                              'Studies have shown unproductive meetings waste over \$36 YoY.',
+                              'Goverment');
+                          DatabaseService(uid: userData.uid).postNewSavedItem(
+                              'Scientists Are Starting to Take Warp Drives Seriously, Especially One Specific Concept',
+                              DateTime.now(),
+                              'The detection of gravitational waves changed things.',
+                              'Science');
+                          DatabaseService(uid: userData.uid).postNewSavedItem(
+                              'Experts demolish studies suggesting COVID-19 is no worse than flu',
+                              DateTime.now(),
+                              'Authors of widely publicized antibody studies \“owe us all an apology,\” one expert says.',
+                              'Health');
+                          DatabaseService(uid: userData.uid).postNewSavedItem(
+                              'Meet The 28-Year-Old Mexican Woman Who Has Just Been Named Best Chef In The World',
+                              DateTime.now(),
+                              'Mexican-born New York chef Daniela Soto-Innes has just been named the world\’s best female chef at the age of 28.',
+                              'Food');
+                        },
+                        child: Text(
+                            'Add Temp Data',
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white
+                            )
+                        )
                       )
                     ],
                   )
