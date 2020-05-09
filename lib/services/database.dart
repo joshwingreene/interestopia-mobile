@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:interestopia/models/user.dart';
 
 class DatabaseService {
 
@@ -15,5 +16,17 @@ class DatabaseService {
     });
   }
 
+  // userData from snapshot
+  UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
+    return UserData(
+      uid: uid,
+      name: snapshot.data['name']
+    );
+  }
+
+  // get user doc stream
+  Stream<UserData> get userData {
+    return userCollection.document(uid).snapshots().map(_userDataFromSnapshot);
+  }
 
 }
