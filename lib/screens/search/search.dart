@@ -33,6 +33,59 @@ class _SearchState extends State<Search> {
     return await DatabaseService(uid: uid).getSavedItemListFromFirebase();
   }
 
+  void tapConsumptionVsReferenceToggle() {
+    print('For Consumption vs Reference toggle');
+  }
+
+  void tapDateTimeSortToggle() {
+    print('DateTimeSaved toggle');
+  }
+
+  void tapTagSelector() { // Should support multiple tags being selected
+    print('Tag Selector button');
+  }
+
+  void tapTopicSelector() { // Only support one topic being selected
+    print('Topic Selector button');
+  }
+
+  void tapMediaTypeSelector() { // Only support one media type being selected
+    print('Media Type Selector button');
+  }
+
+  void tapFavoritedToggle() {
+    print('Favorited toggle');
+  }
+
+  void tapArchivedToggle() {
+    print('Archived toggle');
+  }
+
+  FlatButton buildHorizontalOptionButton({String title, bool hasCaret, bool hasStartingValue, IconData icon, Function f}) {
+    return FlatButton(
+      color: hasStartingValue ? Colors.deepPurpleAccent : Colors.transparent,
+      onPressed: () => f(),
+      child: hasCaret ? Row(
+        children: <Widget>[
+          Text(
+            title,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: hasStartingValue ? Colors.white : Colors.deepPurpleAccent),
+          ),
+          SizedBox(width: 8),
+          Icon(Icons.keyboard_arrow_down, color: hasStartingValue ? Colors.white : Colors.deepPurpleAccent)
+        ],
+      ) : Icon(
+          icon,
+          color: Colors.deepPurpleAccent,
+      ),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+          side: BorderSide(color: hasStartingValue ? Colors.transparent : Colors.deepPurpleAccent),
+    ));
+  }
+
   FlatButton buildClickableListItem(int index, [SavedItem item]) {
     return FlatButton(
       onPressed: () => print('Item Pressed'),
@@ -92,47 +145,29 @@ class _SearchState extends State<Search> {
           children: <Widget>[
             Expanded(
               flex: 1,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Row(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                child: Container(
+                  height: 100,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
                     children: <Widget>[
-                      SizedBox(
-                          width: 10
-                      ),
-                      RaisedButton(
-                          onPressed: () => print('Consumption vs Reference Toggle'),
-                          child: Text(
-                              'For Consumption',
-                              style: TextStyle(
-                                  color: Colors.white
-                              )),
-                          color: Colors.deepPurpleAccent
-                      ),
-                      SizedBox(
-                          width: 10
-                      ),
-                      RaisedButton(
-                          onPressed: () => print('Sort based on dataSaved'),
-                          child: Text(
-                              'Newest First',
-                              style: TextStyle(
-                                  color: Colors.white
-                              )
-                          ),
-                          color: Colors.deepPurpleAccent
-                      ),
-                      SizedBox(
-                          width: 10
-                      ),
-                      RaisedButton(
-                          onPressed: () => print('Consumption vs Reference Toggle'),
-                          child: Text('Tags'),
-                          color: Colors.white
-                      )
+                      buildHorizontalOptionButton(title: 'For Consumption', hasCaret: true, hasStartingValue: true, f: tapConsumptionVsReferenceToggle),
+                      SizedBox(width: 10),
+                      buildHorizontalOptionButton(title: 'Newest to Oldest', hasCaret: true, hasStartingValue: true, f: tapDateTimeSortToggle),
+                      SizedBox (width: 10),
+                      buildHorizontalOptionButton(title: 'Tag', hasCaret: true, hasStartingValue: false, f: tapTagSelector),
+                      SizedBox (width: 10),
+                      buildHorizontalOptionButton(title: 'Topic', hasCaret: true, hasStartingValue: false, f: tapTopicSelector),
+                      SizedBox (width: 10),
+                      buildHorizontalOptionButton(title: 'Media Type', hasCaret: true, hasStartingValue: false, f: tapMediaTypeSelector),
+                      SizedBox (width: 10),
+                      buildHorizontalOptionButton(title: 'Favorite', hasCaret: false, hasStartingValue: false, icon: Icons.star, f: tapFavoritedToggle),
+                      SizedBox (width: 10),
+                      buildHorizontalOptionButton(title: 'Archived', hasCaret: false, hasStartingValue: false, icon: Icons.check, f: tapArchivedToggle)
                     ],
-                  ),
-                ],
+                  )
+                ),
               )
             ),
             Expanded( // The quick, baby pool fix is to change the mainAxisSize of theRow/Column to MainAxisSize.min, then wrap the child that wants to be infinitely large in an Expanded. - https://medium.com/flutter-community/flutter-deep-dive-part-1-renderflex-children-have-non-zero-flex-e25ffcf7c272
