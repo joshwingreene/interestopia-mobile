@@ -22,6 +22,11 @@ class _SearchState extends State<Search> {
 
   final AuthService _auth = AuthService();
   List<SavedItem> savedItems = [];
+  bool isTagSelectorOn = false;
+  bool isTopicSelectorOn = false;
+  bool isMediaTypeSelectorOn = false;
+  bool isFavoritedToggleOn = false;
+  bool isArchivedToggleOn = false;
 
   Future<List<SavedItem>> _getAllItems(String text) async {
 
@@ -49,27 +54,42 @@ class _SearchState extends State<Search> {
 
   void tapTagSelector() { // Should support multiple tags being selected
     print('Tag Selector button');
+    setState(() {
+      isTagSelectorOn = !isTagSelectorOn;
+    });
   }
 
   void tapTopicSelector() { // Only support one topic being selected
     print('Topic Selector button');
+    setState(() {
+      isTopicSelectorOn = !isTopicSelectorOn;
+    });
   }
 
   void tapMediaTypeSelector() { // Only support one media type being selected
     print('Media Type Selector button');
+    setState(() {
+      isMediaTypeSelectorOn = !isMediaTypeSelectorOn;
+    });
   }
 
   void tapFavoritedToggle() {
     print('Favorited toggle');
+    setState(() {
+      isFavoritedToggleOn = !isFavoritedToggleOn;
+    });
   }
 
   void tapArchivedToggle() {
     print('Archived toggle');
+    setState(() {
+      isArchivedToggleOn = !isArchivedToggleOn;
+    });
   }
 
-  FlatButton buildHorizontalOptionButton({String title, bool hasStartingValue, IconData icon, Function f}) {
+  FlatButton buildHorizontalOptionButton({String title, bool hasStartingValue, IconData icon, Function f, bool isOn}) {
     return FlatButton(
-      color: hasStartingValue ? Colors.deepPurpleAccent : Colors.transparent,
+      color: isOn ? Colors.deepPurpleAccent : Colors.transparent,
       onPressed: () => f(),
       child: Row(
         children: <Widget>[
@@ -77,30 +97,31 @@ class _SearchState extends State<Search> {
             title,
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: hasStartingValue ? Colors.white : Colors.deepPurpleAccent),
+              color: isOn ? Colors.white : Colors.deepPurpleAccent),
           ),
           SizedBox(width: 8),
-          Icon(Icons.keyboard_arrow_down, color: hasStartingValue ? Colors.white : Colors.deepPurpleAccent)
+          Icon(Icons.keyboard_arrow_down, color: isOn ? Colors.white : Colors.deepPurpleAccent)
         ],
       ),
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
-          side: BorderSide(color: hasStartingValue ? Colors.transparent : Colors.deepPurpleAccent),
+          side: BorderSide(color: isOn ? Colors.transparent : Colors.deepPurpleAccent),
     ));
   }
 
-  MaterialButton buildSquareHorizontalOptionButton({ IconData icon, Function f}) {
+  MaterialButton buildSquareHorizontalOptionButton({ IconData icon, Function f, bool currentlyBeingUsed}) {
     return MaterialButton(
+      color: currentlyBeingUsed ? Colors.deepPurpleAccent : Colors.white,
       height: 50,
       minWidth: 50,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: Colors.deepPurpleAccent),
+        side: BorderSide(color: currentlyBeingUsed ? Colors.white : Colors.deepPurpleAccent),
       ),
       onPressed: () => f(),
       child: Icon(
         icon,
-        color: Colors.deepPurpleAccent,
+        color: currentlyBeingUsed ? Colors.white : Colors.deepPurpleAccent,
       ),
     );
   }
@@ -171,19 +192,19 @@ class _SearchState extends State<Search> {
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     children: <Widget>[
-                      buildHorizontalOptionButton(title: 'For Consumption', hasStartingValue: true, f: this.tapConsumptionVsReferenceToggle),
+                      buildHorizontalOptionButton(title: 'For Consumption', f: this.tapConsumptionVsReferenceToggle, isOn: true),
                       SizedBox(width: 10),
-                      buildHorizontalOptionButton(title: 'Newest to Oldest', hasStartingValue: true, f: this.tapDateTimeSortToggle),
+                      buildHorizontalOptionButton(title: 'Newest to Oldest', f: this.tapDateTimeSortToggle, isOn: true),
                       SizedBox (width: 10),
-                      buildHorizontalOptionButton(title: 'Tag', hasStartingValue: false, f: this.tapTagSelector),
+                      buildHorizontalOptionButton(title: 'Tag', f: this.tapTagSelector, isOn: this.isTagSelectorOn),
                       SizedBox (width: 10),
-                      buildHorizontalOptionButton(title: 'Topic', hasStartingValue: false, f: this.tapTopicSelector),
+                      buildHorizontalOptionButton(title: 'Topic', f: this.tapTopicSelector, isOn: this.isTopicSelectorOn),
                       SizedBox (width: 10),
-                      buildHorizontalOptionButton(title: 'Media Type', hasStartingValue: false, f: this.tapMediaTypeSelector),
+                      buildHorizontalOptionButton(title: 'Media Type', f: this.tapMediaTypeSelector, isOn: this.isMediaTypeSelectorOn),
                       SizedBox (width: 10),
-                      buildSquareHorizontalOptionButton(icon: Icons.star, f: this.tapFavoritedToggle),
+                      buildSquareHorizontalOptionButton(icon: Icons.star, f: this.tapFavoritedToggle, currentlyBeingUsed: isFavoritedToggleOn),
                       SizedBox (width: 10),
-                      buildSquareHorizontalOptionButton(icon: Icons.check, f: this.tapArchivedToggle),
+                      buildSquareHorizontalOptionButton(icon: Icons.check, f: this.tapArchivedToggle, currentlyBeingUsed: isArchivedToggleOn),
                     ],
                   )
                 ),
