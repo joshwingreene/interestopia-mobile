@@ -86,7 +86,7 @@ class _SignInState extends State<SignIn> {
                                   loading = false;
                                 });
                             } else {
-                              Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false); // think this will do the job - https://stackoverflow.com/questions/52048101/how-to-reset-the-base-route-in-my-flutter-app-that-is-pop-any-routes-and-repla
+                              Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false); // removes all of the previous routes on the stack - https://stackoverflow.com/questions/52048101/how-to-reset-the-base-route-in-my-flutter-app-that-is-pop-any-routes-and-repla
                             }
                           }
 

@@ -1,5 +1,6 @@
 import 'package:flappy_search_bar/search_bar_style.dart';
 import 'package:flutter/material.dart';
+import 'package:interestopia/models/destination.dart';
 import 'package:interestopia/models/savedItem.dart';
 import 'package:interestopia/models/user.dart';
 import 'package:interestopia/services/auth.dart';
@@ -8,6 +9,11 @@ import 'package:provider/provider.dart';
 import 'package:flappy_search_bar/flappy_search_bar.dart';
 
 class Search extends StatefulWidget {
+
+  const Search({ Key key, this.destination }) : super(key: key);
+
+  final Destination destination;
+
   @override
   _SearchState createState() => _SearchState();
 }
@@ -34,7 +40,7 @@ class _SearchState extends State<Search> {
   }
 
   void tapConsumptionVsReferenceToggle() {
-    print('For Consumption vs Reference toggle');
+    print('For Consumption vs Reference toggle'); // Don't forget that users will be able to select an All/Both option as well
   }
 
   void tapDateTimeSortToggle() {

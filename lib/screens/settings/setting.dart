@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:interestopia/models/destination.dart';
 import 'package:interestopia/models/user.dart';
 import 'package:interestopia/services/auth.dart';
 import 'package:interestopia/services/database.dart';
@@ -6,6 +7,11 @@ import 'package:interestopia/shared/loading.dart';
 import 'package:provider/provider.dart';
 
 class Settings extends StatefulWidget {
+
+  const Settings({ Key key, this.destination }) : super(key: key);
+
+  final Destination destination;
+
   @override
   _SettingsState createState() => _SettingsState();
 }
@@ -31,6 +37,7 @@ class _SettingsState extends State<Settings> {
               appBar: AppBar(
                 elevation: 0.0,
                 backgroundColor: Colors.white,
+                brightness: Brightness.dark,
                 title: Text(
                     'Interestopia',
                     style: TextStyle(
