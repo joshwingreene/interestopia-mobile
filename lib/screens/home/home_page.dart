@@ -38,17 +38,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin<HomeP
 
   bool _handleScrollNotification(ScrollNotification notification) {
     if (notification.depth == 0) {
-      if (notification is UserScrollNotification) {
-        final UserScrollNotification userScroll = notification;
-        switch (userScroll.direction) {
-          case ScrollDirection.forward:
-            _hide.forward();
-            break;
-          case ScrollDirection.reverse:
-            _hide.reverse();
-            break;
-          case ScrollDirection.idle:
-            break;
+      String contextStr = notification.context.toString();
+      if (contextStr.contains('vertical')) { // Only do this if the context from the scroll notification says that a vertical gesture is being used
+        if (notification is UserScrollNotification) {
+          final UserScrollNotification userScroll = notification;
+          switch (userScroll.direction) {
+            case ScrollDirection.forward:
+              _hide.forward();
+              break;
+            case ScrollDirection.reverse:
+              _hide.reverse();
+              break;
+            case ScrollDirection.idle:
+              break;
+          }
         }
       }
     }
@@ -63,7 +66,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin<HomeP
         body: SafeArea(
           top: false,
           child: Stack(
-            //index: _currentIndex,
             fit: StackFit.expand,
             children: allDestinations.map<Widget>((Destination destination) {
               final Widget view = FadeTransition(
