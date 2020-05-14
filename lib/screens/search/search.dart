@@ -67,11 +67,11 @@ class _SearchState extends State<Search> {
     print('Archived toggle');
   }
 
-  FlatButton buildHorizontalOptionButton({String title, bool hasCaret, bool hasStartingValue, IconData icon, Function f}) {
+  FlatButton buildHorizontalOptionButton({String title, bool hasStartingValue, IconData icon, Function f}) {
     return FlatButton(
       color: hasStartingValue ? Colors.deepPurpleAccent : Colors.transparent,
       onPressed: () => f(),
-      child: hasCaret ? Row(
+      child: Row(
         children: <Widget>[
           Text(
             title,
@@ -82,14 +82,27 @@ class _SearchState extends State<Search> {
           SizedBox(width: 8),
           Icon(Icons.keyboard_arrow_down, color: hasStartingValue ? Colors.white : Colors.deepPurpleAccent)
         ],
-      ) : Icon(
-          icon,
-          color: Colors.deepPurpleAccent,
       ),
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
           side: BorderSide(color: hasStartingValue ? Colors.transparent : Colors.deepPurpleAccent),
     ));
+  }
+
+  MaterialButton buildSquareHorizontalOptionButton({ IconData icon, Function f}) {
+    return MaterialButton(
+      height: 50,
+      minWidth: 50,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(color: Colors.deepPurpleAccent),
+      ),
+      onPressed: () => f(),
+      child: Icon(
+        icon,
+        color: Colors.deepPurpleAccent,
+      ),
+    );
   }
 
   FlatButton buildClickableListItem(int index, [SavedItem item]) {
@@ -158,19 +171,19 @@ class _SearchState extends State<Search> {
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     children: <Widget>[
-                      buildHorizontalOptionButton(title: 'For Consumption', hasCaret: true, hasStartingValue: true, f: tapConsumptionVsReferenceToggle),
+                      buildHorizontalOptionButton(title: 'For Consumption', hasStartingValue: true, f: this.tapConsumptionVsReferenceToggle),
                       SizedBox(width: 10),
-                      buildHorizontalOptionButton(title: 'Newest to Oldest', hasCaret: true, hasStartingValue: true, f: tapDateTimeSortToggle),
+                      buildHorizontalOptionButton(title: 'Newest to Oldest', hasStartingValue: true, f: this.tapDateTimeSortToggle),
                       SizedBox (width: 10),
-                      buildHorizontalOptionButton(title: 'Tag', hasCaret: true, hasStartingValue: false, f: tapTagSelector),
+                      buildHorizontalOptionButton(title: 'Tag', hasStartingValue: false, f: this.tapTagSelector),
                       SizedBox (width: 10),
-                      buildHorizontalOptionButton(title: 'Topic', hasCaret: true, hasStartingValue: false, f: tapTopicSelector),
+                      buildHorizontalOptionButton(title: 'Topic', hasStartingValue: false, f: this.tapTopicSelector),
                       SizedBox (width: 10),
-                      buildHorizontalOptionButton(title: 'Media Type', hasCaret: true, hasStartingValue: false, f: tapMediaTypeSelector),
+                      buildHorizontalOptionButton(title: 'Media Type', hasStartingValue: false, f: this.tapMediaTypeSelector),
                       SizedBox (width: 10),
-                      buildHorizontalOptionButton(title: 'Favorite', hasCaret: false, hasStartingValue: false, icon: Icons.star, f: tapFavoritedToggle),
+                      buildSquareHorizontalOptionButton(icon: Icons.star, f: this.tapFavoritedToggle),
                       SizedBox (width: 10),
-                      buildHorizontalOptionButton(title: 'Archived', hasCaret: false, hasStartingValue: false, icon: Icons.check, f: tapArchivedToggle)
+                      buildSquareHorizontalOptionButton(icon: Icons.check, f: this.tapArchivedToggle),
                     ],
                   )
                 ),

@@ -41,14 +41,14 @@ class _DestinationViewState extends State<DestinationView> {
               switch (settings.name) {
                 case '/':
                   if (widget.destination.index == 0) {
-                      return RootPage(destination: widget.destination);
+                      return RootPage(destination: widget.destination); //TODO: Replace with the Listen screen when I build it
                   } else if (widget.destination.index == 1) {
                     return Search(destination: widget.destination);
                   } else if ((widget.destination.index == 2)) {
                     return Settings(destination: widget.destination);
                   }
                   break;
-                // the other routes will depend on the destination index
+                // I may not need to use the index anywhere else.
                 case '/list':
                   return ListPage(destination: widget.destination);
                 case '/text':
