@@ -190,32 +190,29 @@ class _SearchState extends State<Search> {
       body: SafeArea(
         child: Column(
           children: <Widget>[
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                child: Container(
-                  height: 100,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: <Widget>[
-                      buildHorizontalOptionButton(title: 'For Consumption', f: this.tapConsumptionVsReferenceToggle, isOn: true),
-                      SizedBox(width: 10),
-                      buildHorizontalOptionButton(title: 'Newest to Oldest', f: this.tapDateTimeSortToggle, isOn: true),
-                      SizedBox (width: 10),
-                      buildHorizontalOptionButton(title: 'Tag', f: this.tapTagSelector, isOn: this.isTagSelectorOn),
-                      SizedBox (width: 10),
-                      buildHorizontalOptionButton(title: 'Topic', f: this.tapTopicSelector, isOn: this.isTopicSelectorOn),
-                      SizedBox (width: 10),
-                      buildHorizontalOptionButton(title: 'Media Type', f: this.tapMediaTypeSelector, isOn: this.isMediaTypeSelectorOn),
-                      SizedBox (width: 10),
-                      buildSquareHorizontalOptionButton(icon: Icons.star, f: this.tapFavoritedToggle, currentlyBeingUsed: isFavoritedToggleOn),
-                      SizedBox (width: 10),
-                      buildSquareHorizontalOptionButton(icon: Icons.check, f: this.tapArchivedToggle, currentlyBeingUsed: isArchivedToggleOn),
-                    ],
-                  )
-                ),
-              )
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+              child: Container(
+                height: 50,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: <Widget>[
+                    buildHorizontalOptionButton(title: 'For Consumption', f: this.tapConsumptionVsReferenceToggle, isOn: true),
+                    SizedBox(width: 10),
+                    buildHorizontalOptionButton(title: 'Newest to Oldest', f: this.tapDateTimeSortToggle, isOn: true),
+                    SizedBox (width: 10),
+                    buildHorizontalOptionButton(title: 'Tag', f: this.tapTagSelector, isOn: this.isTagSelectorOn),
+                    SizedBox (width: 10),
+                    buildHorizontalOptionButton(title: 'Topic', f: this.tapTopicSelector, isOn: this.isTopicSelectorOn),
+                    SizedBox (width: 10),
+                    buildHorizontalOptionButton(title: 'Media Type', f: this.tapMediaTypeSelector, isOn: this.isMediaTypeSelectorOn),
+                    SizedBox (width: 10),
+                    buildSquareHorizontalOptionButton(icon: Icons.star, f: this.tapFavoritedToggle, currentlyBeingUsed: isFavoritedToggleOn),
+                    SizedBox (width: 10),
+                    buildSquareHorizontalOptionButton(icon: Icons.check, f: this.tapArchivedToggle, currentlyBeingUsed: isArchivedToggleOn),
+                  ],
+                )
+              ),
             ),
             Expanded( // The quick, baby pool fix is to change the mainAxisSize of theRow/Column to MainAxisSize.min, then wrap the child that wants to be infinitely large in an Expanded. - https://medium.com/flutter-community/flutter-deep-dive-part-1-renderflex-children-have-non-zero-flex-e25ffcf7c272
               flex: 15,
