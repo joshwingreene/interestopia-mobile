@@ -179,7 +179,14 @@ class _SearchState extends State<Search> {
     }
 
     return Scaffold(
-      appBar: null,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(15),
+        child: AppBar(
+          elevation: 0.0,
+          backgroundColor: Colors.white,
+          brightness: Theme.of(context).brightness,
+        ),
+      ),
       body: SafeArea(
         child: Column(
           children: <Widget>[
@@ -236,3 +243,4 @@ class _SearchState extends State<Search> {
     );
   }
 }
+

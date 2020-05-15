@@ -37,7 +37,7 @@ class _SettingsState extends State<Settings> {
               appBar: AppBar(
                 elevation: 0.0,
                 backgroundColor: Colors.white,
-                brightness: Brightness.dark,
+                brightness: Theme.of(context).brightness,
                 title: Text(
                     'Interestopia',
                     style: TextStyle(
