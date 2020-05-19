@@ -5,6 +5,7 @@ import 'package:interestopia/models/user.dart';
 import 'package:interestopia/screens/search/search_bar_area.dart';
 import 'package:interestopia/services/database.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/scheduler.dart';
 
 class Search extends StatefulWidget {
 
@@ -18,11 +19,35 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
 
+  User user;
+  dynamic docStream;
+
   bool isTagSelectorOn = false;
   bool isTopicSelectorOn = false;
   bool isMediaTypeSelectorOn = false;
   bool isFavoritedToggleOn = false;
   bool isArchivedToggleOn = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) { // Needed in order to do the included code only after super.initState has been completed
+      // accesses the user data from the provider
+      this.user = Provider.of<User>(context, listen: false ); // listen is needed in order to use Provider.of in initState
+
+      this.docStream = DatabaseService(uid: user.uid).listenToDocumentChanges();
+    });
+  }
+
+  @override
+  void dispose() {
+    print('dispose');
+    if (docStream != null)
+      //print('docStream != null'); // called - so this is working as it should
+      docStream.cancel();
+    super.dispose();
+  }
 
   void tapConsumptionVsReferenceToggle() {
     print('For Consumption vs Reference toggle'); // Don't forget that users will be able to select an All/Both option as well
@@ -109,13 +134,10 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
 
-    // accesses the user data from the provider
-    final user = Provider.of<User>(context);
-
-    DatabaseService(uid: user.uid).listenToDocumentChanges();
+    this.user = Provider.of<User>(context); // needed during the initial call of build
 
     return StreamProvider<List<SavedItem>>.value(
-      value: DatabaseService(uid: user.uid).savedItems,
+      value: DatabaseService(uid: this.user.uid).savedItems,
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(15),

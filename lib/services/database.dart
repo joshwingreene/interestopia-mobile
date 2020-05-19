@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:interestopia/models/savedItem.dart';
 import 'package:interestopia/models/user.dart';
@@ -12,11 +14,9 @@ class DatabaseService {
     this.usersSavedItemCollection = Firestore.instance.collection('users/$uid/savedItems');
   }
 
-
   // collection reference
   final CollectionReference userCollection = Firestore.instance.collection(
       'users');
-
 
   Future updateUserData(String name) async {
     // I will add more parameters later
@@ -55,8 +55,8 @@ class DatabaseService {
     }).toList();
   }
 
-  void listenToDocumentChanges() { // TODO: We need to confirm that the frontend isn't rebuilding everything more than it needs to (I'm getting double print statements, 16 added and 2 modified). Plus, this needs to be fixed if I want to show some type of update to the user.
-    usersSavedItemCollection.snapshots().listen((querySnapshot) {
+  StreamSubscription<QuerySnapshot> listenToDocumentChanges() { // TODO: We need to confirm that the frontend isn't rebuilding everything more than it needs to (I'm getting double print statements, 16 added and 2 modified). Plus, this needs to be fixed if I want to show some type of update to the user.
+    return usersSavedItemCollection.snapshots().listen((querySnapshot) {
       querySnapshot.documentChanges.forEach((change) {
         if (change.type == DocumentChangeType.added) {
           print('Item was added');
@@ -68,6 +68,8 @@ class DatabaseService {
       });
     });
   }
+
+  /// Temporarily being used on the settings screen
 
   // post saved item
   void postNewSavedItem(String title, DateTime dateTimeSaved,
@@ -82,6 +84,8 @@ class DatabaseService {
       'topic': topic
     });
   }
+
+  /// Not Using
 
   Future getSavedItemListFromFirebase() async {
     CollectionReference savedItemsCollection = Firestore.instance.collection(
