@@ -4,14 +4,19 @@ import 'package:interestopia/models/user.dart';
 
 class DatabaseService {
 
-  final String uid;
+  String uid;
+  CollectionReference usersSavedItemCollection;
 
-  DatabaseService({ this.uid });
+  DatabaseService({ String uid }) { // TODO: Look into if not using final for the uid is unsafe in any way
+    this.uid = uid;
+    this.usersSavedItemCollection = Firestore.instance.collection('users/$uid/savedItems');
+  }
 
 
   // collection reference
   final CollectionReference userCollection = Firestore.instance.collection(
       'users');
+
 
   Future updateUserData(String name) async {
     // I will add more parameters later
@@ -31,6 +36,37 @@ class DatabaseService {
   // get user doc stream
   Stream<UserData> get userData {
     return userCollection.document(uid).snapshots().map(_userDataFromSnapshot);
+  }
+
+  // get saved item doc stream for user
+  Stream<List<SavedItem>> get savedItems {
+    return usersSavedItemCollection.snapshots()
+      .map(_savedItemListFromSnapshot);
+  }
+
+  List<SavedItem> _savedItemListFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.documents.map((doc) {
+      return SavedItem(
+          title: doc.data['title'] ?? '',
+          dateTimeSaved: doc.data['dateTimeSaved'].toDate() ?? null,
+          description: doc.data['description'] ?? '',
+          topic: doc.data['topic'] ?? null
+      );
+    }).toList();
+  }
+
+  void listenToDocumentChanges() { // TODO: We need to confirm that the frontend isn't rebuilding everything more than it needs to (I'm getting double print statements, 16 added and 2 modified). Plus, this needs to be fixed if I want to show some type of update to the user.
+    usersSavedItemCollection.snapshots().listen((querySnapshot) {
+      querySnapshot.documentChanges.forEach((change) {
+        if (change.type == DocumentChangeType.added) {
+          print('Item was added');
+        } else if (change.type == DocumentChangeType.modified) {
+          print('Item was modified');
+        } else if (change.type == DocumentChangeType.removed) {
+          print('Item was removed');
+        }
+      });
+    });
   }
 
   // post saved item
