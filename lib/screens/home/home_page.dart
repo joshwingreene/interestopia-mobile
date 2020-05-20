@@ -18,6 +18,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin<HomeP
 
   @override
   void initState() {
+    //print('HomePage - initState');
     super.initState();
 
     _faders = allDestinations.map<AnimationController>((Destination destination) {

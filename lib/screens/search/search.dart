@@ -30,13 +30,14 @@ class _SearchState extends State<Search> {
 
   @override
   void initState() {
+    //print('Search - initState');
     super.initState();
 
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) { // Needed in order to do the included code only after super.initState has been completed
       // accesses the user data from the provider
-      this.user = Provider.of<User>(context, listen: false ); // listen is needed in order to use Provider.of in initState
+      this.user = Provider.of<User>(context, listen: false); // listen is needed in order to use Provider.of in initState
 
-      this.docStream = DatabaseService(uid: user.uid).listenToDocumentChanges();
+      this.docStream = DatabaseService(uid: this.user.uid).listenToDocumentChanges();
     });
   }
 

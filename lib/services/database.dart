@@ -57,7 +57,12 @@ class DatabaseService {
 
   StreamSubscription<QuerySnapshot> listenToDocumentChanges() { // TODO: We need to confirm that the frontend isn't rebuilding everything more than it needs to (I'm getting double print statements, 16 added and 2 modified). Plus, this needs to be fixed if I want to show some type of update to the user.
     return usersSavedItemCollection.snapshots().listen((querySnapshot) {
-      querySnapshot.documentChanges.forEach((change) {
+
+      List<DocumentChange> docChanges = querySnapshot.documentChanges;
+
+      print('Number of Document Changes: ' + docChanges.length.toString());
+
+      docChanges.forEach((change) {
         if (change.type == DocumentChangeType.added) {
           print('Item was added');
         } else if (change.type == DocumentChangeType.modified) {
