@@ -9,7 +9,7 @@ class DatabaseService {
   String uid;
   CollectionReference usersSavedItemCollection;
 
-  DatabaseService({ String uid }) { // TODO: Look into if not using final for the uid is unsafe in any way
+  DatabaseService({ String uid }) {
     this.uid = uid;
     this.usersSavedItemCollection = Firestore.instance.collection('users/$uid/savedItems');
   }
