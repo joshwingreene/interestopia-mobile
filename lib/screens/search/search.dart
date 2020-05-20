@@ -171,6 +171,7 @@ class _SearchState extends State<Search> {
                       buildSquareHorizontalOptionButton(icon: Icons.star, f: this.tapFavoritedToggle, currentlyBeingUsed: isFavoritedToggleOn),
                       SizedBox (width: 10),
                       buildSquareHorizontalOptionButton(icon: Icons.check, f: this.tapArchivedToggle, currentlyBeingUsed: isArchivedToggleOn),
+                      SizedBox (width: 13)
                     ],
                   )
                 ),
