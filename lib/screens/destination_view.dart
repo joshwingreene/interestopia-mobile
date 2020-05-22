@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:interestopia/models/destination.dart';
 import 'package:interestopia/observers/view_navigator_observer.dart';
+import 'package:interestopia/screens/save/temp_save_page.dart';
 import 'package:interestopia/screens/search/search.dart';
 import 'package:interestopia/screens/settings/setting.dart';
 
@@ -53,6 +54,8 @@ class _DestinationViewState extends State<DestinationView> {
                   return ListPage(destination: widget.destination);
                 case '/text':
                   return TextPage(destination: widget.destination);
+                case '/save':
+                  return TempSavePage(destination: widget.destination);
               }
             },
         );

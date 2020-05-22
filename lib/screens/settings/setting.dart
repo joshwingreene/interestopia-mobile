@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 
 class Settings extends StatefulWidget {
 
-  const Settings({ Key key, this.destination }) : super(key: key);
+  const Settings({ this.destination }); // removed the key stuff in order to remove that Global key error
 
   final Destination destination;
 
@@ -35,6 +35,10 @@ class _SettingsState extends State<Settings> {
 
           return Scaffold(
               appBar: AppBar(
+                leading: MaterialButton(
+                  onPressed: () => Navigator.pushNamed(context, '/save'),
+                  child: Icon(Icons.add)
+                ),
                 elevation: 0.0,
                 backgroundColor: Colors.white,
                 brightness: Theme.of(context).brightness,
