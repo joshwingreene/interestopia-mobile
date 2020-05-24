@@ -2,6 +2,9 @@ import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:interestopia/models/destination.dart';
+import 'package:interestopia/shared/topic_selector_manager.dart';
+import 'package:interestopia/models/topic.dart';
+import 'package:interestopia/models/topic_with_index_bundle.dart';
 
 class TempSavePage extends StatefulWidget {
 
@@ -13,13 +16,22 @@ class TempSavePage extends StatefulWidget {
   _TempSavePageState createState() => _TempSavePageState();
 }
 
+
 class _TempSavePageState extends State<TempSavePage> {
+
+  String url = '';
+  TopicSelectorManager tManager = TopicSelectorManager();
 
   List<String> tempList = [
     'first tag',
     'second tag',
     'second tag'
   ];
+
+  Future<List<TopicWithIndexBundle>> _getTopicBundles(String text) async {
+
+    return tManager.findTopicsWithStr(text);
+  }
 
   Future<List<String>> _getAllItems(String text) async {
 
@@ -30,25 +42,49 @@ class _TempSavePageState extends State<TempSavePage> {
     return items;
   }
 
-  MaterialButton buildTopicButton({IconData icon, String title, bool isOn}) {
+  List<MaterialButton> _getListOfTopicButtons() {
+    List<MaterialButton> buttonList = [];
+
+    for (int i = 0; i < tManager.getTopics().length; i++) {
+      buttonList.add(buildTopicButton(index: i, topic: tManager.getTopic(i)));
+    }
+
+    return buttonList;
+  }
+
+  MaterialButton buildTopicButton({int index, Topic topic}) {
     return MaterialButton(
-      onPressed: () => print(title + ' pressed'),
-      color: isOn ? Colors.deepPurpleAccent : Colors.white,
+      onPressed: () {
+        print(topic.title + ' pressed');
+
+        // only do this if the selected topic isn't on
+        if (topic.isOn) {
+          setState(() {
+            tManager.resetSelection();
+          });
+        } else {
+          print('else condition');
+          setState(() {
+            tManager.selectTopic(index);
+          });
+        }
+      },
+      color: topic.isOn ? Colors.deepPurpleAccent : Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: isOn ? Colors.transparent : Colors.deepPurpleAccent),
+        side: BorderSide(color: topic.isOn ? Colors.transparent : Colors.deepPurpleAccent),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           Icon(
-              icon,
-              color: isOn ? Colors.white : Colors.deepPurpleAccent
+              topic.icon,
+              color: topic.isOn ? Colors.white : Colors.deepPurpleAccent
           ),
           Text(
-              title,
+              topic.title,
               style: TextStyle(
-                color: isOn ? Colors.white : Colors.deepPurpleAccent
+                color: topic.isOn ? Colors.white : Colors.deepPurpleAccent
               ),
           )
         ],
@@ -85,6 +121,10 @@ class _TempSavePageState extends State<TempSavePage> {
     );
   }
 
+  bool isSaveButtonActive() {
+    return url != '' && tManager.isATopicSelected();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,11 +133,11 @@ class _TempSavePageState extends State<TempSavePage> {
         title: Text('Saving to Interestopia'),
         actions: <Widget>[
           MaterialButton(
-            onPressed: () => print('Save button'),
+            onPressed: isSaveButtonActive() ? () => print('Save button') : null,
             child: Text(
                 'Save',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: isSaveButtonActive() ? Colors.white : Colors.grey[400],
                   fontSize: 18
                 ),
             )
@@ -116,6 +156,9 @@ class _TempSavePageState extends State<TempSavePage> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextField(
+                            onChanged: (val) {
+                              setState(() => url = val);
+                            },
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
                               labelText: 'Enter Url',
@@ -132,11 +175,11 @@ class _TempSavePageState extends State<TempSavePage> {
                         ),
                       ),
                       Expanded(
-                        child: SearchBar(
+                        child: SearchBar<TopicWithIndexBundle>(
                           icon: null,
-                          onSearch: _getAllItems,
-                          onItemFound: (String item, int index) {
-                            return Text(item);
+                          onSearch: _getTopicBundles,
+                          onItemFound: (TopicWithIndexBundle item, int index) {
+                            return buildTopicButton(index: item.index, topic: item.topic);
                           },
                           hintText: 'Enter topic name',
                           searchBarPadding: EdgeInsets.symmetric(horizontal: 10),
@@ -149,25 +192,7 @@ class _TempSavePageState extends State<TempSavePage> {
                               mainAxisSpacing: 10,
                               crossAxisSpacing: 10,
                               crossAxisCount: 3,
-                              children: <Widget>[
-                                buildTopicButton(icon: Icons.brush, title: 'Arts', isOn: false),
-                                buildTopicButton(icon: Icons.business, title: 'Business', isOn: false),
-                                buildTopicButton(icon: Icons.create, title: 'Design', isOn: false),
-                                buildTopicButton(icon: Icons.school, title: 'Education', isOn: false),
-                                buildTopicButton(icon: Icons.shopping_basket, title: 'Fashion', isOn: false),
-                                buildTopicButton(icon: Icons.monetization_on, title: 'Finance', isOn: false),
-                                buildTopicButton(icon: Icons.fastfood, title: 'Food', isOn: false),
-                                buildTopicButton(icon: Icons.hourglass_empty, title: 'Govt', isOn: false),
-                                buildTopicButton(icon: Icons.healing, title: 'Health', isOn: false),
-                                buildTopicButton(icon: Icons.brush, title: 'Leisure', isOn: false),
-                                buildTopicButton(icon: Icons.brush, title: 'News', isOn: false),
-                                buildTopicButton(icon: Icons.brush, title: 'Religion', isOn: false),
-                                buildTopicButton(icon: Icons.brush, title: 'Science', isOn: false),
-                                buildTopicButton(icon: Icons.brush, title: 'Self', isOn: false),
-                                buildTopicButton(icon: Icons.brush, title: 'Society', isOn: false),
-                                buildTopicButton(icon: Icons.brush, title: 'Sports', isOn: false),
-                                buildTopicButton(icon: Icons.brush, title: 'Tech', isOn: false),
-                              ],
+                              children: _getListOfTopicButtons()
                             ),
                           ),
                         ),
