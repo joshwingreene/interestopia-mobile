@@ -21,7 +21,9 @@ class _TempSavePageState extends State<TempSavePage> {
 
   String url = '';
   TopicSelectorManager tManager = TopicSelectorManager();
-
+  bool isConsumptionToggleOn = true;
+  bool isReferenceToggleOn = false;
+  
   List<String> tempList = [
     'first tag',
     'second tag',
@@ -94,7 +96,23 @@ class _TempSavePageState extends State<TempSavePage> {
 
   MaterialButton buildButtonWithLeadingIcon({IconData icon, String title, bool isOn}) {
     return MaterialButton(
-      onPressed: () => print(title + ' pressed'),
+      onPressed: () {
+        if (!isOn) {
+          if (title == 'Consumption') {
+            //print('turn consumption on and reference off');
+            setState(() {
+              this.isConsumptionToggleOn = true;
+              this.isReferenceToggleOn = false;
+            });
+          } else {
+            //print('turn reference on and reference off');
+            setState(() {
+              this.isConsumptionToggleOn = false;
+              this.isReferenceToggleOn = true;
+            });
+          }
+        }
+      },
       color: isOn ? Colors.deepPurpleAccent : Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -176,6 +194,7 @@ class _TempSavePageState extends State<TempSavePage> {
                       ),
                       Expanded(
                         child: SearchBar<TopicWithIndexBundle>(
+                          minimumChars: 1,
                           icon: null,
                           onSearch: _getTopicBundles,
                           onItemFound: (TopicWithIndexBundle item, int index) {
@@ -216,13 +235,13 @@ class _TempSavePageState extends State<TempSavePage> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
                                       Expanded(
-                                          child: buildButtonWithLeadingIcon(icon: Icons.restaurant_menu, title: 'Consumption', isOn: true)
+                                          child: buildButtonWithLeadingIcon(icon: Icons.restaurant_menu, title: 'Consumption', isOn: this.isConsumptionToggleOn)
                                       ),
                                       SizedBox(
                                         width: 10
                                       ),
                                       Expanded(
-                                          child: buildButtonWithLeadingIcon(icon: Icons.book, title: 'Reference', isOn: false)
+                                          child: buildButtonWithLeadingIcon(icon: Icons.book, title: 'Reference', isOn: this.isReferenceToggleOn)
                                       )
                                     ],
                                   ),

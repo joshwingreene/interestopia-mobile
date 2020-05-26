@@ -54,7 +54,7 @@ class TopicSelectorManager {
     List<TopicWithIndexBundle> result = [];
 
     for (int i = 0; i < topicList.length; i++) {
-      if (topicList[i].title.toLowerCase().contains(text)) {
+      if (topicList[i].title.toLowerCase().contains(text.toLowerCase())) {
         result.add(TopicWithIndexBundle(topic: topicList[i], index: i));
       }
     }
