@@ -2,9 +2,11 @@ import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:interestopia/models/destination.dart';
+import 'package:interestopia/shared/tag_selector_manager.dart';
 import 'package:interestopia/shared/topic_selector_manager.dart';
 import 'package:interestopia/models/topic.dart';
 import 'package:interestopia/models/topic_with_index_bundle.dart';
+import 'package:interestopia/models/tag_ui_model.dart';
 
 class TempSavePage extends StatefulWidget {
 
@@ -23,7 +25,11 @@ class _TempSavePageState extends State<TempSavePage> {
   TopicSelectorManager tManager = TopicSelectorManager();
   bool isConsumptionToggleOn = true;
   bool isReferenceToggleOn = false;
-  
+
+  String newTagName = ''; // TODO - this is only temporary (although I may end up making use of it. We will have to see.)
+
+  TagSelectorManager tagSelectorManager = TagSelectorManager();
+
   List<String> tempList = [
     'first tag',
     'second tag',
@@ -143,6 +149,56 @@ class _TempSavePageState extends State<TempSavePage> {
     return url != '' && tManager.isATopicSelected();
   }
 
+  MaterialButton buildTagListItem({int index, String title, int numOfItems, bool isSelected}) {
+    return MaterialButton(
+      padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
+      onPressed: () {
+        setState(() {
+          tagSelectorManager.selectTag(index: index);
+        });
+      },
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Expanded(
+              flex: 2,
+              child: Text(
+                title,
+                style: TextStyle(
+                  color: isSelected ? Colors.deepPurpleAccent : Colors.black,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  fontSize: isSelected ? 25 : 14
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Text(
+                      numOfItems.toString()
+                  ),
+                  SizedBox(
+                    width: 10
+                  ),
+                  MaterialButton(
+                      onPressed: () => print('Delete button tapped'),
+                      height: 20,
+                      minWidth: 20,
+                      child: Icon(
+                          Icons.delete,
+                          color: Colors.grey
+                      )
+                  ),
+                ],
+              ),
+            ),
+          ],
+      )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -247,7 +303,7 @@ class _TempSavePageState extends State<TempSavePage> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
                                   child: Text(
                                       '(Optional) Add tag(s)',
                                       style: TextStyle(
@@ -255,6 +311,7 @@ class _TempSavePageState extends State<TempSavePage> {
                                       )
                                   ),
                                 ),
+                                /*
                                 Expanded(
                                   flex: 1,
                                   child: SearchBar(
@@ -278,6 +335,44 @@ class _TempSavePageState extends State<TempSavePage> {
                                     ),
                                   ),
                                 )
+                                 */
+                                Expanded(
+                                  flex: 1,
+                                  child: Column(
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: TextField(
+                                            onChanged: (val) {
+                                              setState(() => newTagName = val);
+                                            },
+                                            decoration: InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              labelText: 'Enter tag',
+                                            ),
+                                            onSubmitted: (text) {
+                                              setState(() {
+                                                tagSelectorManager.addTag(tag: Tag_UI_Model(title: text));
+                                              });
+                                            },
+                                        ),
+                                      ),
+                                      Expanded(
+                                          flex: 1,
+                                          child: Padding(
+                                            padding: const EdgeInsets.fromLTRB(5, 8, 5, 0),
+                                            child: ListView.separated(
+                                                itemBuilder: (BuildContext context, int index) {
+                                                  Tag_UI_Model tempTag = tagSelectorManager.getTag(index: index);
+                                                  return buildTagListItem(index: index, title: (tempTag.title), numOfItems: tempTag.getNumberOfItems(), isSelected: tempTag.isSelected);
+                                                },
+                                                separatorBuilder: (BuildContext context, int index) => Divider(),
+                                                itemCount: tagSelectorManager.getNumberOfTags()),
+                                          )
+                                      )
+                                    ],
+                                  )
+                                ),
                               ],
                           )
                       ),
