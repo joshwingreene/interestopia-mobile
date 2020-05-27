@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 
 class Topic {
 
-  final String title;
-  final IconData icon;
-  bool isOn;
+  String title;
+  IconData icon;
 
-  Topic({ this.title, this.icon, this.isOn  });
+  Topic({ this.title, this.icon });
 }

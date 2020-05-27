@@ -1,39 +1,39 @@
-import 'package:interestopia/models/topic.dart';
+import 'package:interestopia/models/topic_ui_model.dart';
 import 'package:flutter/material.dart';
 import 'package:interestopia/models/topic_with_index_bundle.dart';
 
 class TopicSelectorManager {
 
   int selectedTopicIndex;
-  List<Topic> topicList = [
-    Topic(icon: Icons.brush, title: 'Arts', isOn: false),
-    Topic(icon: Icons.business, title: 'Business', isOn: false),
-    Topic(icon: Icons.create, title: 'Design', isOn: false),
-    Topic(icon: Icons.school, title: 'Education', isOn: false),
-    Topic(icon: Icons.shopping_basket, title: 'Fashion', isOn: false),
-    Topic(icon: Icons.monetization_on, title: 'Finance', isOn: false),
-    Topic(icon: Icons.fastfood, title: 'Food', isOn: false),
-    Topic(icon: Icons.hourglass_empty, title: 'Govt', isOn: false),
-    Topic(icon: Icons.healing, title: 'Health', isOn: false),
-    Topic(icon: Icons.brush, title: 'Leisure', isOn: false),
-    Topic(icon: Icons.brush, title: 'News', isOn: false),
-    Topic(icon: Icons.brush, title: 'Religion', isOn: false),
-    Topic(icon: Icons.brush, title: 'Science', isOn: false),
-    Topic(icon: Icons.brush, title: 'Self', isOn: false),
-    Topic(icon: Icons.brush, title: 'Society', isOn: false),
-    Topic(icon: Icons.brush, title: 'Sports', isOn: false),
-    Topic(icon: Icons.brush, title: 'Tech', isOn: false)
+  List<Topic_UI_Model> topicList = [
+    Topic_UI_Model(icon: Icons.brush, title: 'Arts'),
+    Topic_UI_Model(icon: Icons.business, title: 'Business'),
+    Topic_UI_Model(icon: Icons.create, title: 'Design'),
+    Topic_UI_Model(icon: Icons.school, title: 'Education'),
+    Topic_UI_Model(icon: Icons.shopping_basket, title: 'Fashion'),
+    Topic_UI_Model(icon: Icons.monetization_on, title: 'Finance'),
+    Topic_UI_Model(icon: Icons.fastfood, title: 'Food'),
+    Topic_UI_Model(icon: Icons.hourglass_empty, title: 'Govt'),
+    Topic_UI_Model(icon: Icons.healing, title: 'Health'),
+    Topic_UI_Model(icon: Icons.brush, title: 'Leisure'),
+    Topic_UI_Model(icon: Icons.brush, title: 'News'),
+    Topic_UI_Model(icon: Icons.brush, title: 'Religion'),
+    Topic_UI_Model(icon: Icons.brush, title: 'Science'),
+    Topic_UI_Model(icon: Icons.brush, title: 'Self'),
+    Topic_UI_Model(icon: Icons.brush, title: 'Society'),
+    Topic_UI_Model(icon: Icons.brush, title: 'Sports'),
+    Topic_UI_Model(icon: Icons.brush, title: 'Tech')
   ];
 
   bool isATopicSelected() {
     return selectedTopicIndex != null;
   }
 
-  List<Topic> getTopics() {
+  List<Topic_UI_Model> getTopics() {
     return topicList;
   }
 
-  Topic getTopic(int index) {
+  Topic_UI_Model getTopic(int index) {
     return topicList[index];
   }
 

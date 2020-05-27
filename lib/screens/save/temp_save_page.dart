@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:interestopia/models/destination.dart';
 import 'package:interestopia/shared/tag_selector_manager.dart';
+import 'package:interestopia/models/topic_ui_model.dart';
 import 'package:interestopia/shared/topic_selector_manager.dart';
-import 'package:interestopia/models/topic.dart';
 import 'package:interestopia/models/topic_with_index_bundle.dart';
 import 'package:interestopia/models/tag_ui_model.dart';
 
@@ -60,7 +60,7 @@ class _TempSavePageState extends State<TempSavePage> {
     return buttonList;
   }
 
-  MaterialButton buildTopicButton({int index, Topic topic}) {
+  MaterialButton buildTopicButton({int index, Topic_UI_Model topic}) {
     return MaterialButton(
       onPressed: () {
         print(topic.title + ' pressed');
