@@ -128,7 +128,7 @@ class DatabaseService {
   /// Temporarily being used on the settings screen
 
   // post saved item
-  void postNewSavedItem({ String title, String url, DateTime dateTimeSaved, String description, String topic, String consumptionOrReference, List<String> associatedTagIds }) async {
+  void postNewSavedItem({ String title, String url, DateTime dateTimeSaved, String description, String topic, String consumptionOrReference, List<dynamic> associatedTagIds }) async {
 
     await usersSavedItemCollection.document().setData({
       'title': title,
