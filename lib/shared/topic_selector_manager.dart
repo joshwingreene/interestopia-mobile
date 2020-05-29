@@ -29,6 +29,10 @@ class TopicSelectorManager {
     return selectedTopicIndex != null;
   }
 
+  String getNameOfSelectedTopic() {
+    return topicList[selectedTopicIndex].title;
+  }
+
   List<Topic_UI_Model> getTopics() {
     return topicList;
   }

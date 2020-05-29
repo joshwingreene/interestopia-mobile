@@ -96,6 +96,7 @@ class _SettingsState extends State<Settings> {
                       RaisedButton(
                         color: Colors.deepPurpleAccent,
                         onPressed: () {
+                          /*
                           DatabaseService(uid: userData.uid).postNewSavedItem(
                               'The Cost of Javascript Frameworks - Web Performance Consulting',
                               DateTime.now(),
@@ -131,6 +132,8 @@ class _SettingsState extends State<Settings> {
                               DateTime.now(),
                               'Mexican-born New York chef Daniela Soto-Innes has just been named the world\’s best female chef at the age of 28.',
                               'Food');
+
+                           */
                         },
                         child: Text(
                             'Add Temp Data',

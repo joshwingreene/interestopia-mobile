@@ -1,11 +1,12 @@
 class Tag {
 
+  String id;
   String title;
-  List<String> itemsWithThisTag = []; // list of item ids
+  List<dynamic> associatedItemIds = []; // list of item ids
 
-  Tag({ this.title });
+  Tag({ this.id, this.title, this.associatedItemIds });
 
   int getNumberOfItems() {
-    return itemsWithThisTag.length;
+    return associatedItemIds.length;
   }
 }
