@@ -18,7 +18,7 @@ class _TagSelectorState extends State<TagSelector> {
 
   String newTagName = ''; // TODO - this is only temporary (although I may end up making use of it. We will have to see.)
 
-  List<Tag> receivedTags = [];
+  List<Tag> receivedTags;
 
   Map<String, bool> selectionState = Map<String, bool>();
 
@@ -89,14 +89,19 @@ class _TagSelectorState extends State<TagSelector> {
   @override
   Widget build(BuildContext context) {
 
+    print('build');
+
     // accesses the user data from the provider
     final user = Provider.of<User>(context);
 
     receivedTags = Provider.of<List<Tag>>(context);
-    for (int i = 0; i < receivedTags.length; i++) {
-      print(receivedTags[i].title);
-      if (selectionState[receivedTags[i].title] == null) {
-        selectionState[receivedTags[i].title] = false;
+
+    if (receivedTags != null) {
+      for (int i = 0; i < receivedTags.length; i++) {
+        print(receivedTags[i].title);
+        if (selectionState[receivedTags[i].title] == null) {
+          selectionState[receivedTags[i].title] = false;
+        }
       }
     }
 
