@@ -119,7 +119,18 @@ class _TagSelectorState extends State<TagSelector> {
             ),
             onSubmitted: (text) { // TODO: I need to make sure that this can't be submitted with an empty string
               setState(() {
-                DatabaseService(uid: user.uid).postNewTag(title: text); // TODO: I want to be able to have new tags automatically be selected (leaving for later)
+                // Should be selected by default
+                selectionState[text] = true;
+
+                // Get the currently selected tag ids and Add this tag's id to it (which is its title)
+                List<dynamic> tempListOfSelectedIds = getListOfSelectedTagIds();
+                tempListOfSelectedIds.add(text);
+
+                // Notify the parent with the result
+                widget.parentAction(tempListOfSelectedIds);
+
+                // Save to backend
+                DatabaseService(uid: user.uid).postNewTag(title: text);
               });
             },
           ),

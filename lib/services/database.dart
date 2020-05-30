@@ -119,7 +119,7 @@ class DatabaseService {
 
   void postNewTag({ String title }) async {
 
-    await usersTagCollection.document().setData({
+    await usersTagCollection.document(title).setData({
       'title': title,
       'associatedItemIds': []
     });
