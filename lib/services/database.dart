@@ -69,7 +69,7 @@ class DatabaseService {
 
   List<Tag> _tagListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
-      print('tag title: ' + doc.data['title'] + ' tag id: ' + doc.documentID);
+      print('tag title: ' + doc.data['title'] + ' tag id: ' + doc.documentID + ' associatedItemIds: ' + doc.data['associatedItemIds'].toString());
 
       return Tag(
           id: doc.documentID ?? null,
@@ -125,12 +125,21 @@ class DatabaseService {
     });
   }
 
+  void modifyTag({ String title, List<dynamic> associatedItemIds }) async {
+
+    await usersTagCollection.document(title).setData({
+      'title': title,
+      'associatedItemIds': associatedItemIds
+    });
+
+  }
+
   /// Temporarily being used on the settings screen
 
   // post saved item
   void postNewSavedItem({ String title, String url, DateTime dateTimeSaved, String description, String topic, String consumptionOrReference, List<dynamic> associatedTagIds }) async {
 
-    await usersSavedItemCollection.document().setData({
+    await usersSavedItemCollection.document(url).setData({
       'title': title,
       'url': url,
       'dateTimeSaved': dateTimeSaved,
@@ -139,6 +148,14 @@ class DatabaseService {
       'consumptionOrReference': consumptionOrReference,
       'associatedTagIds': associatedTagIds
     });
+
+    for (int i = 0; i < associatedTagIds.length; i++) {
+      dynamic tempTag = await usersTagCollection.document(associatedTagIds[i]).get();
+      List<dynamic> tempList = tempTag.data['associatedItemIds'];
+      tempList.add(url);
+
+      modifyTag(title: tempTag.documentID, associatedItemIds: tempList);
+    }
   }
 
   /// Not Using
