@@ -60,7 +60,7 @@ class _TagSelectorState extends State<TagSelector> {
                       width: 10
                   ),
                   MaterialButton(
-                      onPressed: () => Navigator.pushNamed(context, '/edit_tag', arguments: { 'destination': widget.destination, 'tagId': receivedTags[index].id }),
+                      onPressed: () => Navigator.pushNamed(context, '/edit_tag', arguments: { 'destination': widget.destination, 'tag': receivedTags[index] }),
                       height: 20,
                       minWidth: 20,
                       child: Icon(

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:interestopia/models/destination.dart';
+import 'package:interestopia/models/tag.dart';
 
 class EditTag extends StatefulWidget {
 
-  const EditTag({ this.destination, this.tagId }); // I removed the key portion of this line to solve that duplicate global key issue
+  const EditTag({ this.destination, this.tag });
 
   final Destination destination;
 
-  final String tagId;
+  final Tag tag;
 
   @override
   _EditTagState createState() => _EditTagState();
@@ -15,10 +16,18 @@ class EditTag extends StatefulWidget {
 
 class _EditTagState extends State<EditTag> {
 
+  TextEditingController controller;
+
   Map data = {};
 
+  String tagName;
+
   bool isConfirmButtonActive() {
-    return false;
+    if (tagName != null) {
+      return data['tag'].title != tagName;
+    } else {
+      return false;
+    }
   }
 
   @override
@@ -26,11 +35,19 @@ class _EditTagState extends State<EditTag> {
 
     data = ModalRoute.of(context).settings.arguments;
 
-    print('tag Id: ' + data['tagId']);
+    if (tagName == null) {
+      controller = TextEditingController(text: data['tag'].title);
+    }
 
     return Scaffold(
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
+        title: Text(
+            'Edit Tag',
+            style: TextStyle(
+              color: Colors.black,
+            ),
+        ),
         iconTheme: IconThemeData(
           color: Colors.black, //change your color here
         ),
@@ -43,7 +60,7 @@ class _EditTagState extends State<EditTag> {
               child: Text(
                 'Confirm',
                 style: TextStyle(
-                    color: isConfirmButtonActive() ? Colors.white : Colors.grey[400],
+                    color: isConfirmButtonActive() ? Colors.black : Colors.grey[400],
                     fontSize: 18
                 ),
               )
@@ -54,13 +71,51 @@ class _EditTagState extends State<EditTag> {
         child: Column(
           children: <Widget>[
             SizedBox(
-              height: 20
+              height: 50
             ),
-            Text('tag area'),
-            Text(
-              'Delete',
-              style: TextStyle(
-                color: Colors.red
+            Container(
+              color: Colors.white,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 0.0),
+                      child: Text(
+                          'Name',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold
+                          )
+                      ),
+                    )
+                  ),
+                  Expanded(
+                    flex: 5,
+                    child: TextField(
+                      controller: controller,
+                      onChanged: (val) {
+                        print('new text: ' + val);
+                        setState(() => tagName = val);
+                      },
+                      decoration: InputDecoration(
+                        border: InputBorder.none
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+                height: 30
+            ),
+            MaterialButton(
+              padding: const EdgeInsets.all(0.0),
+              onPressed: () => print('delete button tapped'),
+              child: Text(
+                'Delete',
+                style: TextStyle(
+                  color: Colors.red
+                ),
               ),
             )
           ],
