@@ -416,6 +416,7 @@ class _TempSavePageState extends State<TempSavePage> {
                                   Expanded(
                                     flex: 1,
                                     child: TagSelector(
+                                      destination: widget.destination,
                                       parentAction: _updateSelectedTagList,
                                     )
                                   ),

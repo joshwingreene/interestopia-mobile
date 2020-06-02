@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:interestopia/models/destination.dart';
 import 'package:interestopia/models/tag.dart';
 import 'package:interestopia/models/user.dart';
 import 'package:interestopia/services/database.dart';
@@ -6,7 +7,9 @@ import 'package:provider/provider.dart';
 
 class TagSelector extends StatefulWidget {
 
-  TagSelector({ Key key, this.parentAction }) : super(key: key);
+  TagSelector({ Key key, this.destination, this.parentAction }) : super(key: key);
+
+  final Destination destination;
 
   void Function(List<dynamic> value) parentAction; // I couldn't use a named parameter for some reason.
 
@@ -57,11 +60,11 @@ class _TagSelectorState extends State<TagSelector> {
                       width: 10
                   ),
                   MaterialButton(
-                      onPressed: () => print('Delete button tapped'),
+                      onPressed: () => Navigator.pushNamed(context, '/edit_tag', arguments: { 'destination': widget.destination, 'tagId': receivedTags[index].id }),
                       height: 20,
                       minWidth: 20,
                       child: Icon(
-                          Icons.delete,
+                          Icons.edit,
                           color: Colors.grey
                       )
                   ),
