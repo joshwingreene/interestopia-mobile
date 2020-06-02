@@ -25,12 +25,12 @@ class _TagSelectorState extends State<TagSelector> {
 
   Map<String, bool> selectionState = Map<String, bool>();
 
-  MaterialButton buildTagListItem({int index, String title, int numOfItems, bool isSelected}) {
+  MaterialButton buildTagListItem({int index, String id, String title, int numOfItems, bool isSelected}) {
     return MaterialButton(
         padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
         onPressed: () {
           setState(() {
-            selectionState[title] = !selectionState[title];
+            selectionState[id] = !selectionState[id];
             widget.parentAction(getListOfSelectedTagIds());
           });
         },
@@ -81,7 +81,7 @@ class _TagSelectorState extends State<TagSelector> {
 
     for (int i = 0; i < receivedTags.length; i++) {
       Tag tempTag = receivedTags[i];
-      if (selectionState[tempTag.title]) {
+      if (selectionState[tempTag.id]) {
         result.add(tempTag.id);
       }
     }
@@ -101,9 +101,9 @@ class _TagSelectorState extends State<TagSelector> {
 
     if (receivedTags != null) {
       for (int i = 0; i < receivedTags.length; i++) {
-        print(receivedTags[i].title);
-        if (selectionState[receivedTags[i].title] == null) {
-          selectionState[receivedTags[i].title] = false;
+        print('tag id: ' + receivedTags[i].id + ' tag title: ' + receivedTags[i].title);
+        if (selectionState[receivedTags[i].id] == null) {
+          selectionState[receivedTags[i].id] = false;
         }
       }
     }
@@ -122,18 +122,21 @@ class _TagSelectorState extends State<TagSelector> {
             ),
             onSubmitted: (text) { // TODO: I need to make sure that this can't be submitted with an empty string
               setState(() {
-                // Should be selected by default
-                selectionState[text] = true;
+                // Generate the id for this tag
+                String newTagId = DateTime.now().toString();
 
-                // Get the currently selected tag ids and Add this tag's id to it (which is its title)
+                // Should be selected by default
+                selectionState[newTagId] = true;
+
+                // Get the currently selected tag ids and Add this tag's id to it
                 List<dynamic> tempListOfSelectedIds = getListOfSelectedTagIds();
-                tempListOfSelectedIds.add(text);
+                tempListOfSelectedIds.add(newTagId);
 
                 // Notify the parent with the result
                 widget.parentAction(tempListOfSelectedIds);
 
                 // Save to backend
-                DatabaseService(uid: user.uid).postNewTag(title: text);
+                DatabaseService(uid: user.uid).postNewTag(id: newTagId, title: text);
               });
             },
           ),
@@ -145,7 +148,7 @@ class _TagSelectorState extends State<TagSelector> {
               child: ListView.separated(
                   itemBuilder: (BuildContext context, int index) {
                     Tag tempTag = receivedTags[index];
-                    return buildTagListItem(index: index, title: tempTag.title, numOfItems: tempTag.getNumberOfItems(), isSelected: selectionState[tempTag.title]);
+                    return buildTagListItem(index: index, id: tempTag.id, title: tempTag.title, numOfItems: tempTag.getNumberOfItems(), isSelected: selectionState[tempTag.id]);
                   },
                   separatorBuilder: (BuildContext context, int index) => Divider(),
                   itemCount: receivedTags != null ? receivedTags.length : 0),

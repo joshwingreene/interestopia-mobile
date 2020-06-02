@@ -69,7 +69,7 @@ class DatabaseService {
 
   List<Tag> _tagListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
-      print('tag title: ' + doc.data['title'] + ' tag id: ' + doc.documentID + ' associatedItemIds: ' + doc.data['associatedItemIds'].toString());
+      //print('tag title: ' + doc.data['title'] + ' tag id: ' + doc.documentID + ' associatedItemIds: ' + doc.data['associatedItemIds'].toString());
 
       return Tag(
           id: doc.documentID ?? null,
@@ -117,21 +117,24 @@ class DatabaseService {
     });
   }
 
-  void postNewTag({ String title }) async {
+  void postNewTag({ String id, String title }) async {
 
-    await usersTagCollection.document(title).setData({
+    await usersTagCollection.document(id).setData({
       'title': title,
       'associatedItemIds': []
     });
   }
 
-  void modifyTag({ String title, List<dynamic> associatedItemIds }) async {
+  Future modifyTag({ String id, String title, List<dynamic> associatedItemIds }) async {
 
-    await usersTagCollection.document(title).setData({
-      'title': title,
-      'associatedItemIds': associatedItemIds
-    });
-
+    try {
+      await usersTagCollection.document(id).setData({
+        'title': title,
+        'associatedItemIds': associatedItemIds
+      });
+    } catch (e) {
+      print('error in modifyTag');
+    }
   }
 
   /// Temporarily being used on the settings screen
@@ -149,12 +152,13 @@ class DatabaseService {
       'associatedTagIds': associatedTagIds
     });
 
+    // add the item's id to each of the tags that are associated with it
     for (int i = 0; i < associatedTagIds.length; i++) {
       dynamic tempTag = await usersTagCollection.document(associatedTagIds[i]).get();
       List<dynamic> tempList = tempTag.data['associatedItemIds'];
       tempList.add(url);
 
-      modifyTag(title: tempTag.documentID, associatedItemIds: tempList);
+      modifyTag(id: tempTag.documentID, title: tempTag.data['title'], associatedItemIds: tempList);
     }
   }
 

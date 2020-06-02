@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:interestopia/models/destination.dart';
 import 'package:interestopia/models/tag.dart';
+import 'package:interestopia/models/user.dart';
+import 'package:interestopia/services/database.dart';
+import 'package:provider/provider.dart';
 
 class EditTag extends StatefulWidget {
 
@@ -30,8 +33,20 @@ class _EditTagState extends State<EditTag> {
     }
   }
 
+  void renameTag({ String userId }) {
+
+    DatabaseService(uid: userId).modifyTag(id: data['tag'].id, title: tagName, associatedItemIds: data['tag'].associatedItemIds)
+        .then((value) {
+          // Go back to the TempSavePage
+          Navigator.pop(context);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    // accesses the user data from the provider
+    final user = Provider.of<User>(context);
 
     data = ModalRoute.of(context).settings.arguments;
 
@@ -56,7 +71,7 @@ class _EditTagState extends State<EditTag> {
         elevation: 0.0,
         actions: <Widget>[
           MaterialButton(
-              onPressed: isConfirmButtonActive() ? () => print('Confirm') : null,
+              onPressed: isConfirmButtonActive() ? () => renameTag(userId: user.uid) : null,
               child: Text(
                 'Confirm',
                 style: TextStyle(
@@ -94,7 +109,7 @@ class _EditTagState extends State<EditTag> {
                     child: TextField(
                       controller: controller,
                       onChanged: (val) {
-                        print('new text: ' + val);
+                        //print('new text: ' + val);
                         setState(() => tagName = val);
                       },
                       decoration: InputDecoration(
