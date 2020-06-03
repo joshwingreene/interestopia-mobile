@@ -4,6 +4,7 @@ import 'package:interestopia/models/tag.dart';
 import 'package:interestopia/models/user.dart';
 import 'package:interestopia/services/database.dart';
 import 'package:provider/provider.dart';
+import 'package:interestopia/shared/functions.dart';
 
 class TagSelector extends StatefulWidget {
 
@@ -22,6 +23,8 @@ class _TagSelectorState extends State<TagSelector> {
   String newTagName = ''; // TODO - this is only temporary (although I may end up making use of it. We will have to see.)
 
   List<Tag> receivedTags;
+
+  bool willHaveDuplicateTag = false;
 
   Map<String, bool> selectionState = Map<String, bool>();
 
@@ -60,7 +63,7 @@ class _TagSelectorState extends State<TagSelector> {
                       width: 10
                   ),
                   MaterialButton(
-                      onPressed: () => Navigator.pushNamed(context, '/edit_tag', arguments: { 'destination': widget.destination, 'tag': receivedTags[index] }),
+                      onPressed: () => Navigator.pushNamed(context, '/edit_tag', arguments: { 'destination': widget.destination, 'tag': receivedTags[index], 'all_tags': receivedTags }),
                       height: 20,
                       minWidth: 20,
                       child: Icon(
@@ -108,39 +111,53 @@ class _TagSelectorState extends State<TagSelector> {
       }
     }
 
+    //print('willHaveDuplicateTag: ' + willHaveDuplicateTag.toString());
+
     return Column(
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.all(10.0),
           child: TextField(
             onChanged: (val) {
-              setState(() => newTagName = val);
+              setState(() {
+                newTagName = val;
+                if (tagWithTitleExists(title: val, tags: receivedTags)) {
+                  willHaveDuplicateTag = true;
+                } else {
+                  willHaveDuplicateTag = false;
+                }
+              });
             },
             decoration: InputDecoration(
               border: OutlineInputBorder(),
               labelText: 'Enter tag',
             ),
-            onSubmitted: (text) { // TODO: I need to make sure that this can't be submitted with an empty string
-              setState(() {
-                // Generate the id for this tag
-                String newTagId = DateTime.now().toString();
+            onSubmitted: (text) {
+              if (!willHaveDuplicateTag) {
+                setState(() {
+                  // Generate the id for this tag
+                  String newTagId = DateTime.now().toString();
 
-                // Should be selected by default
-                selectionState[newTagId] = true;
+                  // Should be selected by default
+                  selectionState[newTagId] = true;
 
-                // Get the currently selected tag ids and Add this tag's id to it
-                List<dynamic> tempListOfSelectedIds = getListOfSelectedTagIds();
-                tempListOfSelectedIds.add(newTagId);
+                  // Get the currently selected tag ids and Add this tag's id to it
+                  List<dynamic> tempListOfSelectedIds = getListOfSelectedTagIds();
+                  tempListOfSelectedIds.add(newTagId);
 
-                // Notify the parent with the result
-                widget.parentAction(tempListOfSelectedIds);
+                  // Notify the parent with the result
+                  widget.parentAction(tempListOfSelectedIds);
 
-                // Save to backend
-                DatabaseService(uid: user.uid).postNewTag(id: newTagId, title: text);
-              });
+                  // Save to backend
+                  DatabaseService(uid: user.uid).postNewTag(id: newTagId, title: text);
+
+                  willHaveDuplicateTag = true; // This is needed for the current textfield approach.
+                });
+              }
             },
           ),
         ),
+        willHaveDuplicateTag ? Text('Duplicate tags aren\'t allowed', style: TextStyle(color: Colors.red)) : SizedBox(height: 0),
         Expanded(
             flex: 1,
             child: Padding(

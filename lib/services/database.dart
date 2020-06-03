@@ -137,6 +137,36 @@ class DatabaseService {
     }
   }
 
+  Future deleteTag({ String id, List<dynamic> associatedItemIds }) async {
+    try {
+      // delete the tag from the backend
+      await usersTagCollection.document(id).delete();
+
+      // remove the tag from all of the item's that have this tag
+      for (int i = 0; i < associatedItemIds.length; i++) {
+        // fetch the item
+        dynamic tempSavedItem = await usersSavedItemCollection.document(associatedItemIds[i]).get();
+
+        // delete the tag from the item by updating its associatedTagIds array and then pushing an update to the backend
+        List<dynamic> tempList = tempSavedItem.data['associatedTagIds'];
+        tempList.remove(id); // this will work based on my test in that dart pad
+        await modifySavedItemsTags(id: tempSavedItem.documentID, associatedTagIds: tempList);
+      }
+    } catch (e) {
+      print('error in deleteTag');
+    }
+  }
+
+  Future modifySavedItemsTags({ String id, List<dynamic> associatedTagIds}) async {
+    try {
+      await usersSavedItemCollection.document(id).setData({
+        'associatedTagIds': associatedTagIds
+      }, merge: true);
+    } catch (e) {
+      print('error in modifySavedItem');
+    }
+  }
+
   /// Temporarily being used on the settings screen
 
   // post saved item

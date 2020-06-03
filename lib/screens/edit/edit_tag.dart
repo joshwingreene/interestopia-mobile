@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:interestopia/models/destination.dart';
-import 'package:interestopia/models/tag.dart';
 import 'package:interestopia/models/user.dart';
 import 'package:interestopia/services/database.dart';
 import 'package:provider/provider.dart';
+import 'package:interestopia/shared/functions.dart';
 
 class EditTag extends StatefulWidget {
 
-  const EditTag({ this.destination, this.tag });
+  const EditTag({ this.destination });
 
   final Destination destination;
-
-  final Tag tag;
 
   @override
   _EditTagState createState() => _EditTagState();
@@ -25,9 +23,11 @@ class _EditTagState extends State<EditTag> {
 
   String tagName;
 
+  bool willHaveDuplicateTag = false;
+
   bool isConfirmButtonActive() {
     if (tagName != null) {
-      return data['tag'].title != tagName;
+      return data['tag'].title != tagName && !willHaveDuplicateTag;
     } else {
       return false;
     }
@@ -36,6 +36,15 @@ class _EditTagState extends State<EditTag> {
   void renameTag({ String userId }) {
 
     DatabaseService(uid: userId).modifyTag(id: data['tag'].id, title: tagName, associatedItemIds: data['tag'].associatedItemIds)
+        .then((value) {
+          // Go back to the TempSavePage
+          Navigator.pop(context);
+    });
+  }
+
+  void deleteTag({ String userId }) {
+
+    DatabaseService(uid: userId).deleteTag(id: data['tag'].id, associatedItemIds: data['tag'].associatedItemIds)
         .then((value) {
           // Go back to the TempSavePage
           Navigator.pop(context);
@@ -53,6 +62,8 @@ class _EditTagState extends State<EditTag> {
     if (tagName == null) {
       controller = TextEditingController(text: data['tag'].title);
     }
+
+    //print('willHaveDuplicateTag: ' + willHaveDuplicateTag.toString());
 
     return Scaffold(
       backgroundColor: Colors.grey[300],
@@ -110,7 +121,14 @@ class _EditTagState extends State<EditTag> {
                       controller: controller,
                       onChanged: (val) {
                         //print('new text: ' + val);
-                        setState(() => tagName = val);
+                        setState(() {
+                          tagName = val;
+                          if (tagWithTitleExists(title: val, tags: data['all_tags']) && val != data['tag'].title) {
+                            willHaveDuplicateTag = true;
+                          } else {
+                            willHaveDuplicateTag = false;
+                          }
+                        });
                       },
                       decoration: InputDecoration(
                         border: InputBorder.none
@@ -123,9 +141,10 @@ class _EditTagState extends State<EditTag> {
             SizedBox(
                 height: 30
             ),
+            willHaveDuplicateTag ? Text('Duplicate tags aren\'t allowed', style: TextStyle(color: Colors.red)) : SizedBox(height: 0),
             MaterialButton(
               padding: const EdgeInsets.all(0.0),
-              onPressed: () => print('delete button tapped'),
+              onPressed: () => deleteTag(userId: user.uid),
               child: Text(
                 'Delete',
                 style: TextStyle(
