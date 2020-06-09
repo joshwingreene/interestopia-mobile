@@ -46,33 +46,6 @@ class _TempSavePageState extends State<TempSavePage> {
     'second tag'
   ];
 
-  /*
-  @override
-  void initState() {
-    //print('Search - initState');
-    super.initState();
-
-    SchedulerBinding.instance.addPostFrameCallback((timeStamp) { // Needed in order to do the included code only after super.initState has been completed
-
-      this.tagSelectorManager = TagSelectorManager();
-
-      // accesses the user data from the provider
-      this.user = Provider.of<User>(context, listen: false); // listen is needed in order to use Provider.of in initState
-
-      this.tagStream = DatabaseService(uid: this.user.uid).listenToTagChanges(tagSelectorManager: this.tagSelectorManager);
-    });
-  }
-
-  @override
-  void dispose() {
-    print('dispose');
-    if (tagStream != null)
-      print('tagStream != null'); // called - so this is working as it should
-      tagStream.cancel();
-    super.dispose();
-  }
-  */
-
   Future<List<TopicWithIndexBundle>> _getTopicBundles(String text) async {
 
     return tManager.findTopicsWithStr(text);
@@ -185,58 +158,6 @@ class _TempSavePageState extends State<TempSavePage> {
   bool isSaveButtonActive() {
     return title != '' && url != '' && tManager.isATopicSelected();
   }
-
-  /*
-  MaterialButton buildTagListItem({int index, String title, int numOfItems, bool isSelected}) {
-    return MaterialButton(
-      padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
-      onPressed: () {
-        setState(() {
-          tagSelectorManager.selectTag(index: index);
-        });
-      },
-      child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Expanded(
-              flex: 2,
-              child: Text(
-                title,
-                style: TextStyle(
-                  color: isSelected ? Colors.deepPurpleAccent : Colors.black,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  fontSize: isSelected ? 25 : 14
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Text(
-                      numOfItems.toString()
-                  ),
-                  SizedBox(
-                    width: 10
-                  ),
-                  MaterialButton(
-                      onPressed: () => print('Delete button tapped'),
-                      height: 20,
-                      minWidth: 20,
-                      child: Icon(
-                          Icons.delete,
-                          color: Colors.grey
-                      )
-                  ),
-                ],
-              ),
-            ),
-          ],
-      )
-    );
-  }
-   */
 
   void saveItem({ User user }) {
     DatabaseService(uid: user.uid).postNewSavedItem(

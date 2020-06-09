@@ -12,7 +12,7 @@ class SavedItem {
   double progressAmount; // new
   bool isArchived; // new
   bool isFavorited; // new
-  String content; // new
+  String content; // new (will be overwritten with the parsed content from the parsing server)(I don't want to save data twice.)
   int parsedWordCount; // new
 
   SavedItem({ String title, DateTime dateTimeSaved, String description, String topic, String consumptionOrReference, List<dynamic> associatedTagIds }) {

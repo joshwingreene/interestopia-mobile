@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:interestopia/models/destination.dart';
 import 'package:interestopia/models/savedItem.dart';
+import 'package:interestopia/models/tag.dart';
 import 'package:interestopia/models/user.dart';
 import 'package:interestopia/screens/search/search_bar_area.dart';
 import 'package:interestopia/services/database.dart';
@@ -139,48 +140,51 @@ class _SearchState extends State<Search> {
 
     return StreamProvider<List<SavedItem>>.value(
       value: DatabaseService(uid: this.user.uid).savedItems,
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(15),
-          child: AppBar(
-            elevation: 0.0,
-            backgroundColor: Colors.white,
-            brightness: Theme.of(context).brightness,
+      child: StreamProvider<List<Tag>>.value(
+        value: DatabaseService(uid: this.user.uid).tags,
+        child: Scaffold(
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(15),
+            child: AppBar(
+              elevation: 0.0,
+              backgroundColor: Colors.white,
+              brightness: Theme.of(context).brightness,
+            ),
           ),
-        ),
-        body: SafeArea(
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-                child: Container(
-                  height: 50,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: <Widget>[
-                      buildHorizontalOptionButton(title: 'For Consumption', f: this.tapConsumptionVsReferenceToggle, isOn: true),
-                      SizedBox(width: 10),
-                      buildHorizontalOptionButton(title: 'Newest to Oldest', f: this.tapDateTimeSortToggle, isOn: true),
-                      SizedBox (width: 10),
-                      buildHorizontalOptionButton(title: 'Tag', f: this.tapTagSelector, isOn: this.isTagSelectorOn),
-                      SizedBox (width: 10),
-                      buildHorizontalOptionButton(title: 'Topic', f: this.tapTopicSelector, isOn: this.isTopicSelectorOn),
-                      SizedBox (width: 10),
-                      buildHorizontalOptionButton(title: 'Media Type', f: this.tapMediaTypeSelector, isOn: this.isMediaTypeSelectorOn),
-                      SizedBox (width: 10),
-                      buildSquareHorizontalOptionButton(icon: Icons.star, f: this.tapFavoritedToggle, currentlyBeingUsed: isFavoritedToggleOn),
-                      SizedBox (width: 10),
-                      buildSquareHorizontalOptionButton(icon: Icons.check, f: this.tapArchivedToggle, currentlyBeingUsed: isArchivedToggleOn),
-                      SizedBox (width: 13)
-                    ],
-                  )
+          body: SafeArea(
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                  child: Container(
+                    height: 50,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: <Widget>[
+                        buildHorizontalOptionButton(title: 'For Consumption', f: this.tapConsumptionVsReferenceToggle, isOn: true),
+                        SizedBox(width: 10),
+                        buildHorizontalOptionButton(title: 'Newest to Oldest', f: this.tapDateTimeSortToggle, isOn: true),
+                        SizedBox (width: 10),
+                        buildHorizontalOptionButton(title: 'Tag', f: this.tapTagSelector, isOn: this.isTagSelectorOn),
+                        SizedBox (width: 10),
+                        buildHorizontalOptionButton(title: 'Topic', f: this.tapTopicSelector, isOn: this.isTopicSelectorOn),
+                        SizedBox (width: 10),
+                        buildHorizontalOptionButton(title: 'Media Type', f: this.tapMediaTypeSelector, isOn: this.isMediaTypeSelectorOn),
+                        SizedBox (width: 10),
+                        buildSquareHorizontalOptionButton(icon: Icons.star, f: this.tapFavoritedToggle, currentlyBeingUsed: isFavoritedToggleOn),
+                        SizedBox (width: 10),
+                        buildSquareHorizontalOptionButton(icon: Icons.check, f: this.tapArchivedToggle, currentlyBeingUsed: isArchivedToggleOn),
+                        SizedBox (width: 13)
+                      ],
+                    )
+                  ),
                 ),
-              ),
-              Expanded( // The quick, baby pool fix is to change the mainAxisSize of theRow/Column to MainAxisSize.min, then wrap the child that wants to be infinitely large in an Expanded. - https://medium.com/flutter-community/flutter-deep-dive-part-1-renderflex-children-have-non-zero-flex-e25ffcf7c272
-                flex: 15,
-                child: SearchBarArea()
-              ),
-            ],
+                Expanded( // The quick, baby pool fix is to change the mainAxisSize of theRow/Column to MainAxisSize.min, then wrap the child that wants to be infinitely large in an Expanded. - https://medium.com/flutter-community/flutter-deep-dive-part-1-renderflex-children-have-non-zero-flex-e25ffcf7c272
+                  flex: 15,
+                  child: SearchBarArea()
+                ),
+              ],
+            ),
           ),
         ),
       ),
