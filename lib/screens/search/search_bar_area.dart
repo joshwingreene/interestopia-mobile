@@ -63,7 +63,7 @@ class _SearchBarAreaState extends State<SearchBarArea> {
 
     if (numberOfRows < 1) {
 
-      List<Label> row = [Label.noLeftMargin(text: placeholder)];
+      List<Label> row = [Label.isEstimateLabel(text: placeholder)];
 
       for (int i = 1; i < tagStringList.length; i++) {
         row.add(Label(text: tagStringList[i]));
@@ -75,7 +75,7 @@ class _SearchBarAreaState extends State<SearchBarArea> {
 
       // determine tags to display for first row
       double firstRowWidth = placeholder.length * fontSize + 16.0;
-      List<Label> firstRow = [Label.noLeftMargin(text: placeholder)];
+      List<Label> firstRow = [Label.isEstimateLabel(text: placeholder)];
       List<Label> secondRow = []; // for left over tags
 
       for (int j = 1; j < tagWidthList.length; j++) {
@@ -101,7 +101,7 @@ class _SearchBarAreaState extends State<SearchBarArea> {
 
       // determine tags to display for first row (copied from above with slight changes)
       double firstRowWidth = placeholder.length * fontSize + 16.0;
-      List<Label> firstRow = [Label.noLeftMargin(text: placeholder)];
+      List<Label> firstRow = [Label.isEstimateLabel(text: placeholder)];
       List<int> leftOverTagIndexes = [];
 
       for (int j = 1; j < tagWidthList.length; j++) {
@@ -143,15 +143,17 @@ class _SearchBarAreaState extends State<SearchBarArea> {
     return colResult;
   }
 
-  FlatButton buildClickableListItem(item) {
+  MaterialButton buildClickableListItem(item) {
 
     //print('Item Title: ' + item.title);
 
     //print(item.associatedTagIds.toString());
 
-    return FlatButton(
+    return MaterialButton(
       onPressed: () => print('Item Pressed'),
+      padding: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           MeasureSize(
             onChange: (size) {
@@ -170,6 +172,9 @@ class _SearchBarAreaState extends State<SearchBarArea> {
                   children: <Widget>[
                     Text(
                       item.title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.normal
+                      ),
                     ),
                     SizedBox(height: 10),
                     Text(
@@ -186,8 +191,11 @@ class _SearchBarAreaState extends State<SearchBarArea> {
             ),
           ),
           Expanded(
-              child: Image.asset('images/temp.png')
-          )
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+              child: Image.asset('images/temp.png'),
+            ),
+          ),
         ],
       ),
     );
