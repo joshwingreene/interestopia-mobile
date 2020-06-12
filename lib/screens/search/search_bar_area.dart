@@ -3,6 +3,7 @@ import 'package:interestopia/models/savedItem.dart';
 import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:interestopia/models/tag.dart';
 import 'package:interestopia/screens/search/label.dart';
+import 'package:interestopia/shared/measure_size.dart';
 import 'package:provider/provider.dart';
 
 class SearchBarArea extends StatefulWidget {
@@ -11,6 +12,8 @@ class SearchBarArea extends StatefulWidget {
 }
 
 class _SearchBarAreaState extends State<SearchBarArea> {
+
+  double itemInfoAreaWidth;
 
   Map<String, Tag> tagMap = Map<String, Tag>();
 
@@ -35,54 +38,150 @@ class _SearchBarAreaState extends State<SearchBarArea> {
     return labelList;
   }
 
+  Column getTagDisplay({ double itemInfoAreaWidth, String placeholder, List<dynamic> tagIdList }) { // assigning this to the children property of a new column
+
+    Column colResult;
+    double fontSize = 8.0;
+    double totalTagTextWidth = placeholder.length * fontSize + 16.0; // 14 is a default font size // 16 is the total horizontal padding that is added by the label
+    List<double> tagWidthList = [totalTagTextWidth]; // starting with the resulting placeholder width
+    List<String> tagStringList = [placeholder];
+
+    for (int i = 0; i < tagIdList.length; i++) {
+      String tempTagTitle = tagMap[tagIdList[i]].title;
+      double tempTagWidth = tempTagTitle.length * fontSize + 16.0 + 8.0; // 8.0 is for the left margin
+      tagWidthList.add(tempTagWidth);
+      totalTagTextWidth += tempTagWidth;
+      tagStringList.add(tempTagTitle);
+    }
+
+    //print('itemInfoAreaWidth: ' + itemInfoAreaWidth.toString());
+
+    //print('totalTagTextWidth: ' + totalTagTextWidth.toString());
+
+    double numberOfRows = totalTagTextWidth / itemInfoAreaWidth;
+    //print('itemInfoAreaWidth / totalTagTextWidth = ' + numberOfRows.toString());
+
+    if (numberOfRows < 1) {
+
+      List<Label> row = [Label.noLeftMargin(text: placeholder)];
+
+      for (int i = 1; i < tagStringList.length; i++) {
+        row.add(Label(text: tagStringList[i]));
+      }
+
+      colResult = Column(children: [ Row(children: row) ]);
+
+    } else if (numberOfRows >= 1 && numberOfRows < 2) { // at most 2 rows (will be adding a condition before this for at most 1 row)
+
+      // determine tags to display for first row
+      double firstRowWidth = placeholder.length * fontSize + 16.0;
+      List<Label> firstRow = [Label.noLeftMargin(text: placeholder)];
+      List<Label> secondRow = []; // for left over tags
+
+      for (int j = 1; j < tagWidthList.length; j++) {
+        //print('looking at tag: ' + tagStringList[j] + ' has width: ' + tagWidthList[j].toString());
+        //print('firstRowWidth: ' + firstRowWidth.toString());
+        if ((firstRowWidth + tagWidthList[j]) >= itemInfoAreaWidth) {
+          if (secondRow.length == 0) {
+            secondRow.add(Label.noLeftMargin(text: tagStringList[j]));
+          } else {
+            secondRow.add(Label(text: tagStringList[j]));
+          }
+          continue;
+        } else {
+          firstRow.add(Label(text: tagStringList[j]));
+          firstRowWidth += tagWidthList[j];
+        }
+      }
+
+      // put the col together using each row
+      colResult = Column(children: [ Row(children: firstRow), SizedBox(height: 10), Row(children: secondRow) ]);
+
+    } else if (numberOfRows >= 2) { // 2 rows or more with "..." tag at the end of the second row
+
+      // determine tags to display for first row (copied from above with slight changes)
+      double firstRowWidth = placeholder.length * fontSize + 16.0;
+      List<Label> firstRow = [Label.noLeftMargin(text: placeholder)];
+      List<int> leftOverTagIndexes = [];
+
+      for (int j = 1; j < tagWidthList.length; j++) {
+        if ((firstRowWidth + tagWidthList[j]) >= itemInfoAreaWidth) {
+          leftOverTagIndexes.add(j);
+          continue;
+        } else {
+          firstRow.add(Label(text: tagStringList[j]));
+          firstRowWidth += tagWidthList[j];
+        }
+      }
+
+      // determine tags to display for the second row
+      double secondRowWidth = 3 * fontSize + 16.0 + 8.0; // this is for the "..." // 8.0 is for the left margin
+      List<Label> secondRow = [];
+
+      for (int m = 0; m < leftOverTagIndexes.length; m++) {
+        //print('looking at tag: ' + tagStringList[leftOverTagIndexes[m]] + ' has width: ' + tagWidthList[leftOverTagIndexes[m]].toString());
+        //print('secondRowWidth: ' + secondRowWidth.toString());
+        if ((secondRowWidth + tagWidthList[leftOverTagIndexes[m]]) >= itemInfoAreaWidth) {
+          continue;
+        } else {
+          if (secondRow.length == 0) {
+            secondRow.add(Label.noLeftMargin(text: tagStringList[leftOverTagIndexes[m]]));
+          } else {
+            secondRow.add(Label(text: tagStringList[leftOverTagIndexes[m]]));
+          }
+          secondRowWidth += tagWidthList[leftOverTagIndexes[m]];
+        }
+      }
+
+      // add the "..." label
+      secondRow.add(Label(text: '...'));
+
+      // put the col together using each row
+      colResult = Column(children: [ Row(children: firstRow), SizedBox(height: 10), Row(children: secondRow) ]);
+    }
+
+    return colResult;
+  }
+
   FlatButton buildClickableListItem(item) {
 
-    // TODO: Get the tags via the ids (I believe I wanted to retrieve all of the tags first and then getting the tag names via their ids.)
+    //print('Item Title: ' + item.title);
 
-    print(item.associatedTagIds.toString());
-
-    // get the
-
-    //List<String> tagTitles = item.associatedTagIds.
+    //print(item.associatedTagIds.toString());
 
     return FlatButton(
       onPressed: () => print('Item Pressed'),
       child: Row(
         children: <Widget>[
-          Expanded(
-            flex: 3,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    item.title,
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                      'medium.com',
-                      style: TextStyle(
-                          color: Colors.grey[500]
-                      )
-                  ),
-                  SizedBox(height: 10),
-                  SizedBox(
-                    height: 100,
-                    child: GridView.count(
-                        primary: false, // removes scrolling from this gridview
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 10,
-                        crossAxisCount: 3,
-                        children: [ Label(text: 'one'), Label(text: 'two'), Label(text: 'three'), Label(text: 'four'), Label(text: 'five'), Label(text: 'six') ]//_getListOfLabels(item.associatedTagIds)
+          MeasureSize(
+            onChange: (size) {
+              setState(() {
+                print('size: ' + size.width.toString());
+                itemInfoAreaWidth = size.width;
+              });
+            },
+            child: Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      item.title,
                     ),
-                  ),
-                  /*
-                  item.associatedTagIds.length != 0 ? Label(
-                    text: 'has tags',
-                  ) : SizedBox(height: 10) */
-                ],
+                    SizedBox(height: 10),
+                    Text(
+                        'medium.com',
+                        style: TextStyle(
+                            color: Colors.grey[500]
+                        )
+                    ),
+                    SizedBox(height: 10),
+                    itemInfoAreaWidth != null ? getTagDisplay(itemInfoAreaWidth: itemInfoAreaWidth, placeholder: '100 mins', tagIdList: item.associatedTagIds) : Column(children: [])
+                  ],
+                ),
               ),
             ),
           ),
@@ -101,6 +200,7 @@ class _SearchBarAreaState extends State<SearchBarArea> {
 
     if (tempTags != null) {
       for (int i = 0; i < tempTags.length; i++) {
+        print('tag id: ' + tempTags[i].id);
         tagMap[tempTags[i].id] = tempTags[i];
       }
     }
