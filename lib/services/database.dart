@@ -44,7 +44,7 @@ class DatabaseService {
 
   // get saved item doc stream for user
   Stream<List<SavedItem>> get savedItems {
-    return usersSavedItemCollection.snapshots()
+    return usersSavedItemCollection.orderBy('dateTimeSaved', descending: true).snapshots()
       .map(_savedItemListFromSnapshot);
   }
 

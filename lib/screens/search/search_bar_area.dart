@@ -13,6 +13,8 @@ class SearchBarArea extends StatefulWidget {
 
 class _SearchBarAreaState extends State<SearchBarArea> {
 
+  int mode = 0;
+
   double itemInfoAreaWidth;
 
   Map<String, Tag> tagMap = Map<String, Tag>();
@@ -200,11 +202,28 @@ class _SearchBarAreaState extends State<SearchBarArea> {
       ),
     );
   }
+  
+  List<SavedItem> changeResult({ int mode, List<SavedItem> savedItems }) {
+    
+    // TODO: Change the modes to constant values instead of using integers
+    // 0 - default (filters for only the consumption items)
+    //
+
+    List<SavedItem> result;
+
+    if (mode == 0) {
+      result = savedItems.where((item) => item.consumptionOrReference == 'consumption').toList();
+
+    }
+
+    return result;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final tempSavedItems = Provider.of<List<SavedItem>>(context);
+    final tempSavedItems = changeResult(mode: mode, savedItems: Provider.of<List<SavedItem>>(context));
     final tempTags = Provider.of<List<Tag>>(context);
+    final SearchBarController _searchBarController = SearchBarController();
 
     if (tempTags != null) {
       for (int i = 0; i < tempTags.length; i++) {
@@ -220,6 +239,7 @@ class _SearchBarAreaState extends State<SearchBarArea> {
      */
 
     return SearchBar( // What's being done with the placeholder property is just being done temporarily. This will fetch a specific number of the most recently saved items. If the user scrolls, it will fetch more.
+      searchBarController: _searchBarController,
       placeHolder: ListView.separated(
           itemBuilder: (BuildContext context, int index) {
             return buildClickableListItem(tempSavedItems[index]);
