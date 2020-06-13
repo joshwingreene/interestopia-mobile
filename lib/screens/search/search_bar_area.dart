@@ -28,133 +28,136 @@ class _SearchBarAreaState extends State<SearchBarArea> {
     return items;
   }
 
-  List<Label> _getListOfLabels(List<dynamic> tagIdList) {
-    List<Label> labelList = [];
-
-    for (int i = 0; i < tagIdList.length; i++) {
-      labelList.add(Label(text: tagMap[tagIdList[i]].title));
-    }
-
-    return labelList;
+  List<Widget> buildTimeEstimate({ int timeEstimate }) {
+    return [
+      Icon(
+        Icons.access_time,
+        color: Colors.deepPurpleAccent,
+        size: 20,
+      ),
+      SizedBox(width: 5),
+      Text(
+          timeEstimate.toString() + 'm',
+          style: TextStyle(
+            color: Colors.grey[700],
+          )
+      ),
+    ];
   }
 
-  Column getTagDisplay({ double itemInfoAreaWidth, String placeholder, List<dynamic> tagIdList }) { // assigning this to the children property of a new column
+  List<Widget> buildTagDisplay({ double remainingSpace, List<dynamic> tagIdList }) {
 
-    Column colResult;
-    double fontSize = 8.0;
-    double totalTagTextWidth = placeholder.length * fontSize + 16.0; // 14 is a default font size // 16 is the total horizontal padding that is added by the label
-    List<double> tagWidthList = [totalTagTextWidth]; // starting with the resulting placeholder width
-    List<String> tagStringList = [placeholder];
+    List<Widget> result = [];
+
+    double fontSize = 9.0;
+    double iconSize = 20.0;
+    double totalTagTextWidth = iconSize + 5;
+    List<double> tagWidthList = [totalTagTextWidth]; // start with the width of the icon and that sized box
+    List<String> tagStringList = ['icon'];
 
     for (int i = 0; i < tagIdList.length; i++) {
       String tempTagTitle = tagMap[tagIdList[i]].title;
-      double tempTagWidth = tempTagTitle.length * fontSize + 16.0 + 8.0; // 8.0 is for the left margin
-      tagWidthList.add(tempTagWidth);
+      double tempTagWidth = tempTagTitle.length * fontSize;
       totalTagTextWidth += tempTagWidth;
+      tagWidthList.add(tempTagWidth);
       tagStringList.add(tempTagTitle);
     }
 
-    //print('itemInfoAreaWidth: ' + itemInfoAreaWidth.toString());
+    bool willTheTagsOverflow = totalTagTextWidth > remainingSpace;
 
-    //print('totalTagTextWidth: ' + totalTagTextWidth.toString());
+    // determine tags to display for row
+    double rowWidth = iconSize + 5;
+    List<Widget> row = [];
+    String tagsStr = "";
 
-    double numberOfRows = totalTagTextWidth / itemInfoAreaWidth;
-    //print('itemInfoAreaWidth / totalTagTextWidth = ' + numberOfRows.toString());
-
-    if (numberOfRows < 1) {
-
-      List<Label> row = [Label.isEstimateLabel(text: placeholder)];
-
-      for (int i = 1; i < tagStringList.length; i++) {
-        row.add(Label(text: tagStringList[i]));
+    if (!willTheTagsOverflow) {
+      for (int j = 1; j < tagWidthList.length; j++) {
+        //print('looking at tag: ' + tagStringList[j] + ' has width: ' + tagWidthList[j].toString());
+        //print('firstRowWidth: ' + rowWidth.toString());
+        if ((rowWidth + tagWidthList[j]) >= remainingSpace) {
+          continue;
+        } else {
+          if (tagsStr.length == 0) {
+            tagsStr += tagStringList[j];
+          } else {
+            tagsStr += ', ' + tagStringList[j];
+          }
+          rowWidth += tagWidthList[j];
+        }
       }
-
-      colResult = Column(children: [ Row(children: row) ]);
-
-    } else if (numberOfRows >= 1 && numberOfRows < 2) { // at most 2 rows (will be adding a condition before this for at most 1 row)
-
-      // determine tags to display for first row
-      double firstRowWidth = placeholder.length * fontSize + 16.0;
-      List<Label> firstRow = [Label.isEstimateLabel(text: placeholder)];
-      List<Label> secondRow = []; // for left over tags
+    } else {
+      List<int> leftOverTagIndexes = [];
+      rowWidth += 5 * fontSize; // for the ', etc' at the end
 
       for (int j = 1; j < tagWidthList.length; j++) {
         //print('looking at tag: ' + tagStringList[j] + ' has width: ' + tagWidthList[j].toString());
-        //print('firstRowWidth: ' + firstRowWidth.toString());
-        if ((firstRowWidth + tagWidthList[j]) >= itemInfoAreaWidth) {
-          if (secondRow.length == 0) {
-            secondRow.add(Label.noLeftMargin(text: tagStringList[j]));
-          } else {
-            secondRow.add(Label(text: tagStringList[j]));
-          }
-          continue;
-        } else {
-          firstRow.add(Label(text: tagStringList[j]));
-          firstRowWidth += tagWidthList[j];
-        }
-      }
-
-      // put the col together using each row
-      colResult = Column(children: [ Row(children: firstRow), SizedBox(height: 10), Row(children: secondRow) ]);
-
-    } else if (numberOfRows >= 2) { // 2 rows or more with "..." tag at the end of the second row
-
-      // determine tags to display for first row (copied from above with slight changes)
-      double firstRowWidth = placeholder.length * fontSize + 16.0;
-      List<Label> firstRow = [Label.isEstimateLabel(text: placeholder)];
-      List<int> leftOverTagIndexes = [];
-
-      for (int j = 1; j < tagWidthList.length; j++) {
-        if ((firstRowWidth + tagWidthList[j]) >= itemInfoAreaWidth) {
+        //print('firstRowWidth: ' + rowWidth.toString());
+        if ((rowWidth + tagWidthList[j]) >= remainingSpace) {
           leftOverTagIndexes.add(j);
           continue;
         } else {
-          firstRow.add(Label(text: tagStringList[j]));
-          firstRowWidth += tagWidthList[j];
-        }
-      }
-
-      // determine tags to display for the second row
-      double secondRowWidth = 3 * fontSize + 16.0 + 8.0; // this is for the "..." // 8.0 is for the left margin
-      List<Label> secondRow = [];
-
-      for (int m = 0; m < leftOverTagIndexes.length; m++) {
-        //print('looking at tag: ' + tagStringList[leftOverTagIndexes[m]] + ' has width: ' + tagWidthList[leftOverTagIndexes[m]].toString());
-        //print('secondRowWidth: ' + secondRowWidth.toString());
-        if ((secondRowWidth + tagWidthList[leftOverTagIndexes[m]]) >= itemInfoAreaWidth) {
-          continue;
-        } else {
-          if (secondRow.length == 0) {
-            secondRow.add(Label.noLeftMargin(text: tagStringList[leftOverTagIndexes[m]]));
+          if (tagsStr.length == 0) {
+            tagsStr += tagStringList[j];
           } else {
-            secondRow.add(Label(text: tagStringList[leftOverTagIndexes[m]]));
+            tagsStr += ', ' + tagStringList[j];
           }
-          secondRowWidth += tagWidthList[leftOverTagIndexes[m]];
+          rowWidth += tagWidthList[j];
         }
       }
-
-      // add the "..." label
-      secondRow.add(Label(text: '...'));
-
-      // put the col together using each row
-      colResult = Column(children: [ Row(children: firstRow), SizedBox(height: 10), Row(children: secondRow) ]);
+      tagsStr += ', etc';
     }
 
-    return colResult;
+    result.add(Icon(Icons.label_outline, color: Colors.deepPurpleAccent, size: iconSize));
+    result.add(SizedBox(width: 5));
+    result.add(Text(tagsStr, style: TextStyle(color: Colors.grey[700])));
+
+    return result;
+  }
+
+  Row buildRow({ double itemInfoAreaWidth, int timeEstimate, List<dynamic> tagIdList }) { // assigning this to the children property of a new column
+
+    bool hasTags = tagIdList.length != 0;
+    bool hasTimeEstimate = timeEstimate != null;
+
+    double fontSize = 10.0;
+    double iconSize = 20.0;
+
+    if (!hasTags) {
+      return Row(children: buildTimeEstimate(timeEstimate: timeEstimate));
+    } else if (!hasTimeEstimate) {
+      // ignore the size of the time estimate components when putting the tag display together
+      return Row(children: buildTagDisplay(remainingSpace: itemInfoAreaWidth, tagIdList: tagIdList));
+    } else {
+      double calcRemainingSpace = itemInfoAreaWidth - (iconSize + 5 + (4 * fontSize) + 10); // subtracting the space taken by the time estimate stuff and the sized box after it
+      List<Widget> widgetList = buildTimeEstimate(timeEstimate: timeEstimate);
+      widgetList.add(SizedBox(width: 10));
+      widgetList.addAll(buildTagDisplay(tagIdList: tagIdList, remainingSpace: calcRemainingSpace));
+      return Row(children: widgetList);
+    }
   }
 
   MaterialButton buildClickableListItem(item) {
 
-    //print('Item Title: ' + item.title);
+    print('Item Title: ' + item.title);
+    //print('itemInfoAreaWidth: ' + itemInfoAreaWidth.toString());
 
     //print(item.associatedTagIds.toString());
 
     return MaterialButton(
       onPressed: () => print('Item Pressed'),
-      padding: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
+      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(5.0),
+                  child: Image.asset('images/temp.png')
+              ),
+            ),
+          ),
           MeasureSize(
             onChange: (size) {
               setState(() {
@@ -173,7 +176,9 @@ class _SearchBarAreaState extends State<SearchBarArea> {
                     Text(
                       item.title,
                       style: TextStyle(
-                        fontWeight: FontWeight.normal
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[700],
+                        //fontSize: 14
                       ),
                     ),
                     SizedBox(height: 10),
@@ -184,16 +189,11 @@ class _SearchBarAreaState extends State<SearchBarArea> {
                         )
                     ),
                     SizedBox(height: 10),
-                    itemInfoAreaWidth != null ? getTagDisplay(itemInfoAreaWidth: itemInfoAreaWidth, placeholder: '100 mins', tagIdList: item.associatedTagIds) : Column(children: [])
+                    item.parsedWordCount == null && item.associatedTagIds.length == 0 ? SizedBox(height: 0) : buildRow(itemInfoAreaWidth: itemInfoAreaWidth, timeEstimate: 100, tagIdList: item.associatedTagIds)
+                    // TODO: Convert the parsed word count to the average listening or reading time
                   ],
                 ),
               ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-              child: Image.asset('images/temp.png'),
             ),
           ),
         ],
@@ -224,7 +224,7 @@ class _SearchBarAreaState extends State<SearchBarArea> {
           itemBuilder: (BuildContext context, int index) {
             return buildClickableListItem(tempSavedItems[index]);
           },
-          separatorBuilder: (BuildContext context, int index) => Divider(),
+          separatorBuilder: (BuildContext context, int index) => Divider(indent: 8.0, endIndent: 8.0, color: Colors.grey[400]),
           itemCount: tempSavedItems != null ? tempSavedItems.length : 0),
       hintText: 'Enter title or phrase',
       searchBarPadding: EdgeInsets.symmetric(horizontal: 10),
