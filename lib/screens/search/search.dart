@@ -84,6 +84,18 @@ class _SearchState extends State<Search> {
     }
   }
 
+  ListTile buildOptionListItem({ int index, String trailingText }) {
+    return ListTile(
+      title: Text(trailingText == null ? consRefAllModes[index] : consRefAllModes[index] + trailingText),
+      onTap: consRefAllModes[index] == consRefAllModes[searchConfig.getConfRefAllMode()] ? null : ()  {
+
+        changeConRefAllState(index: index);
+
+        dismissDialog(dialogVar: dialog);
+      },
+    );
+  }
+
   void tapConsumptionVsReferenceToggle() {
     print('For Consumption vs Reference vs All toggle'); // Don't forget that users will be able to select an All/Both option as well
 
@@ -92,7 +104,31 @@ class _SearchState extends State<Search> {
       useRootNavigator: true,
       headerAnimationLoop: false,
       dialogType: DialogType.NO_HEADER,
-      body: Container(
+      body: Column(
+        children: <Widget>[
+          Text('Filter by Purpose',
+            style: TextStyle(
+              color: Colors.deepPurpleAccent,
+              fontWeight: FontWeight.bold,
+              fontSize: 18
+            )),
+          buildOptionListItem(index: SearchConfig.CONSUMPTION),
+          Divider(),
+          buildOptionListItem(index: SearchConfig.REFERENCE),
+          Divider(),
+          buildOptionListItem(index: SearchConfig.ALL, trailingText: ' (show both)')
+        ],
+      )
+    );
+
+    dialog.show();
+  }
+
+  void tapDateTimeSortToggle() {
+    print('DateTimeSaved toggle');
+  }
+
+  /*Container( // was assigned to the above AwesomeDialog's body property
         height: 200, // TODO: Use MeasureSize in order to get the height of the SafeArea and use it to know how big this dialog should be
         child: ListView.separated(
             itemBuilder: (BuildContext context, int index) {
@@ -109,17 +145,9 @@ class _SearchState extends State<Search> {
             separatorBuilder: (BuildContext context, int index) => Divider(),
             itemCount: consRefAllModes.length,
         ),
-      ),
-    );
+      ), */
 
-    dialog.show();
-  }
-
-  void tapDateTimeSortToggle() {
-    print('DateTimeSaved toggle');
-  }
-
-  void tapTagSelector() { // Should support multiple tags being selected
+  void tapTagSelector() { // Should support multiple tags being selected // TODO - (left the commented out code above for reference) Will need to use a container and a height around the tags listview
     print('Tag Selector button');
     setState(() {
       isTagSelectorOn = !isTagSelectorOn;

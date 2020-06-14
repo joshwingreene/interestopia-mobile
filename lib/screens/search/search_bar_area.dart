@@ -214,11 +214,26 @@ class _SearchBarAreaState extends State<SearchBarArea> {
 
     List<SavedItem> result;
 
+    // ConsRefAll Selector
     if (widget.currentSearchConfig.getConfRefAllMode() == SearchConfig.CONSUMPTION) {
       result = savedItems.where((item) => item.consumptionOrReference == 'consumption').toList();
     } else if (widget.currentSearchConfig.getConfRefAllMode() == SearchConfig.REFERENCE) {
       result = savedItems.where((item) => item.consumptionOrReference == 'reference').toList();
+    } else if (widget.currentSearchConfig.getConfRefAllMode() == SearchConfig.ALL) {
+      result = savedItems;
     }
+
+    // TODO - Date Time Sort Order Selector (also sorted in desc order will pulling from the database)
+
+    // TODO - Tag Selector
+
+    // TODO - Topic Selector
+
+    // TODO - Media Type Selector
+
+    // TODO - Favorited Toggle
+
+    // TODO - Archived Toggle
 
     return result;
   }
