@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:interestopia/models/destination.dart';
 import 'package:interestopia/models/savedItem.dart';
+import 'package:interestopia/models/search_config.dart';
 import 'package:interestopia/models/tag.dart';
 import 'package:interestopia/models/user.dart';
 import 'package:interestopia/screens/search/search_bar_area.dart';
@@ -23,6 +24,9 @@ class _SearchState extends State<Search> {
 
   User user;
   dynamic docStream;
+
+  List<String> consRefAllModes = ['For Consumption', 'For Reference', 'All Items'];
+  SearchConfig searchConfig = SearchConfig();
 
   bool isTagSelectorOn = false;
   bool isTopicSelectorOn = false;
@@ -58,10 +62,30 @@ class _SearchState extends State<Search> {
     dialogVar.dissmiss();
   }
 
+  void changeConRefAllState({ int index }) {
+
+    //print(options[index] + ' button tapped');
+
+    if (consRefAllModes[index] == 'For Consumption') {
+      print('for consumption');
+      setState(() {
+        searchConfig.changeConfRefAllMode(mode: 0);
+      });
+    } else if (consRefAllModes[index] == 'For Reference') {
+      print('for reference');
+      setState(() {
+        searchConfig.changeConfRefAllMode(mode: 1);
+      });
+    } else {
+      print('all items');
+      setState(() {
+        searchConfig.changeConfRefAllMode(mode: 2);
+      });
+    }
+  }
+
   void tapConsumptionVsReferenceToggle() {
     print('For Consumption vs Reference vs All toggle'); // Don't forget that users will be able to select an All/Both option as well
-
-    List<String> options = ['For Consumption', 'For Reference', 'All'];
 
     dialog = AwesomeDialog(
       context: context,
@@ -73,15 +97,17 @@ class _SearchState extends State<Search> {
         child: ListView.separated(
             itemBuilder: (BuildContext context, int index) {
               return ListTile(
-                  title: Text(options[index]),
-                  onTap: () {
-                    print(options[index] + ' button tapped');
+                  title: Text(consRefAllModes[index]),
+                  onTap: consRefAllModes[index] == consRefAllModes[searchConfig.getConfRefAllMode()] ? null : ()  {
+
+                    changeConRefAllState(index: index);
+
                     dismissDialog(dialogVar: dialog);
                   },
               );
             },
             separatorBuilder: (BuildContext context, int index) => Divider(),
-            itemCount: options.length,
+            itemCount: consRefAllModes.length,
         ),
       ),
     );
@@ -195,7 +221,7 @@ class _SearchState extends State<Search> {
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: <Widget>[
-                        buildHorizontalOptionButton(title: 'For Consumption', f: this.tapConsumptionVsReferenceToggle, isOn: true),
+                        buildHorizontalOptionButton(title: consRefAllModes[searchConfig.getConfRefAllMode()], f: this.tapConsumptionVsReferenceToggle, isOn: true),
                         SizedBox(width: 10),
                         buildHorizontalOptionButton(title: 'Newest to Oldest', f: this.tapDateTimeSortToggle, isOn: true),
                         SizedBox (width: 10),
@@ -215,7 +241,7 @@ class _SearchState extends State<Search> {
                 ),
                 Expanded( // The quick, baby pool fix is to change the mainAxisSize of theRow/Column to MainAxisSize.min, then wrap the child that wants to be infinitely large in an Expanded. - https://medium.com/flutter-community/flutter-deep-dive-part-1-renderflex-children-have-non-zero-flex-e25ffcf7c272
                   flex: 15,
-                  child: SearchBarArea()
+                  child: SearchBarArea(currentSearchConfig: searchConfig)
                 ),
               ],
             ),

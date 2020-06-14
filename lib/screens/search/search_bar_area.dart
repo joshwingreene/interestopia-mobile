@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:interestopia/models/savedItem.dart';
 import 'package:flappy_search_bar/flappy_search_bar.dart';
+import 'package:interestopia/models/search_config.dart';
 import 'package:interestopia/models/tag.dart';
 import 'package:interestopia/shared/measure_size.dart';
 import 'package:provider/provider.dart';
 
 class SearchBarArea extends StatefulWidget {
+
+  SearchBarArea({ this.currentSearchConfig });
+
+  SearchConfig currentSearchConfig;
+
   @override
   _SearchBarAreaState createState() => _SearchBarAreaState();
 }
@@ -202,17 +208,16 @@ class _SearchBarAreaState extends State<SearchBarArea> {
     );
   }
   
-  List<SavedItem> changeResult({ int mode, List<SavedItem> savedItems }) {
-    
-    // TODO: Change the modes to constant values instead of using integers
-    // 0 - default (filters for only the consumption items)
-    //
+  List<SavedItem> changeResult({ List<SavedItem> savedItems }) {
+
+    //print('changeResult - mode - ' + widget.currentSearchConfig.getConfRefAllMode().toString());
 
     List<SavedItem> result;
 
-    if (mode == 0) {
+    if (widget.currentSearchConfig.getConfRefAllMode() == SearchConfig.CONSUMPTION) {
       result = savedItems.where((item) => item.consumptionOrReference == 'consumption').toList();
-
+    } else if (widget.currentSearchConfig.getConfRefAllMode() == SearchConfig.REFERENCE) {
+      result = savedItems.where((item) => item.consumptionOrReference == 'reference').toList();
     }
 
     return result;
@@ -220,7 +225,9 @@ class _SearchBarAreaState extends State<SearchBarArea> {
 
   @override
   Widget build(BuildContext context) {
-    final tempSavedItems = changeResult(mode: mode, savedItems: Provider.of<List<SavedItem>>(context));
+    var tempSavedItems = Provider.of<List<SavedItem>>(context);
+    if (tempSavedItems != null) // This should fix that 'where' called on null value issue when the app is initially run
+      tempSavedItems = changeResult(savedItems: tempSavedItems);
     final tempTags = Provider.of<List<Tag>>(context);
     final SearchBarController _searchBarController = SearchBarController();
 
