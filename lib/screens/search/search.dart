@@ -7,6 +7,7 @@ import 'package:interestopia/screens/search/search_bar_area.dart';
 import 'package:interestopia/services/database.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 
 class Search extends StatefulWidget {
 
@@ -28,6 +29,8 @@ class _SearchState extends State<Search> {
   bool isMediaTypeSelectorOn = false;
   bool isFavoritedToggleOn = false;
   bool isArchivedToggleOn = false;
+
+  var dialog;
 
   @override
   void initState() {
@@ -51,8 +54,39 @@ class _SearchState extends State<Search> {
     super.dispose();
   }
 
+  void dismissDialog({ var dialogVar }) {
+    dialogVar.dissmiss();
+  }
+
   void tapConsumptionVsReferenceToggle() {
-    print('For Consumption vs Reference toggle'); // Don't forget that users will be able to select an All/Both option as well
+    print('For Consumption vs Reference vs All toggle'); // Don't forget that users will be able to select an All/Both option as well
+
+    List<String> options = ['For Consumption', 'For Reference', 'All'];
+
+    dialog = AwesomeDialog(
+      context: context,
+      useRootNavigator: true,
+      headerAnimationLoop: false,
+      dialogType: DialogType.NO_HEADER,
+      body: Container(
+        height: 200, // TODO: Use MeasureSize in order to get the height of the SafeArea and use it to know how big this dialog should be
+        child: ListView.separated(
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                  title: Text(options[index]),
+                  onTap: () {
+                    print(options[index] + ' button tapped');
+                    dismissDialog(dialogVar: dialog);
+                  },
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) => Divider(),
+            itemCount: options.length,
+        ),
+      ),
+    );
+
+    dialog.show();
   }
 
   void tapDateTimeSortToggle() {

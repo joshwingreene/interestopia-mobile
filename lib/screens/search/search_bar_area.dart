@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:interestopia/models/savedItem.dart';
 import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:interestopia/models/tag.dart';
-import 'package:interestopia/screens/search/label.dart';
 import 'package:interestopia/shared/measure_size.dart';
 import 'package:provider/provider.dart';
 
