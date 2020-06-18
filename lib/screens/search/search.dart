@@ -85,14 +85,18 @@ class _SearchState extends State<Search> {
   }
 
   ListTile buildOptionListItem({ int index, String trailingText }) {
+
+    bool isSelected = consRefAllModes[index] == consRefAllModes[searchConfig.getConfRefAllMode()];
+
     return ListTile(
       title: Text(trailingText == null ? consRefAllModes[index] : consRefAllModes[index] + trailingText),
-      onTap: consRefAllModes[index] == consRefAllModes[searchConfig.getConfRefAllMode()] ? null : ()  {
+      onTap: isSelected ? null : ()  {
 
         changeConRefAllState(index: index);
 
         dismissDialog(dialogVar: dialog);
       },
+      trailing: isSelected ? Icon(Icons.radio_button_checked) : Icon(Icons.radio_button_unchecked),
     );
   }
 
