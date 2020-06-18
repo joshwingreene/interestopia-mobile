@@ -4,6 +4,7 @@ import 'package:interestopia/models/savedItem.dart';
 import 'package:interestopia/models/search_config.dart';
 import 'package:interestopia/models/tag.dart';
 import 'package:interestopia/models/user.dart';
+import 'package:interestopia/screens/search/option_modal.dart';
 import 'package:interestopia/screens/search/search_bar_area.dart';
 import 'package:interestopia/services/database.dart';
 import 'package:provider/provider.dart';
@@ -58,45 +59,41 @@ class _SearchState extends State<Search> {
     super.dispose();
   }
 
-  void dismissDialog({ var dialogVar }) {
-    dialogVar.dissmiss();
-  }
-
-  void changeConRefAllState({ int index }) {
+  void changePurposeState({ int index }) {
 
     //print(options[index] + ' button tapped');
 
     if (consRefAllModes[index] == 'For Consumption') {
       print('for consumption');
       setState(() {
-        searchConfig.changeConfRefAllMode(mode: 0);
+        searchConfig.changePurposeMode(mode: 0);
       });
     } else if (consRefAllModes[index] == 'For Reference') {
       print('for reference');
       setState(() {
-        searchConfig.changeConfRefAllMode(mode: 1);
+        searchConfig.changePurposeMode(mode: 1);
       });
     } else {
       print('all items');
       setState(() {
-        searchConfig.changeConfRefAllMode(mode: 2);
+        searchConfig.changePurposeMode(mode: 2);
       });
     }
   }
 
   ListTile buildOptionListItem({ int index, String trailingText }) {
 
-    bool isSelected = consRefAllModes[index] == consRefAllModes[searchConfig.getConfRefAllMode()];
+    bool isSelected = consRefAllModes[index] == consRefAllModes[searchConfig.getCurrentPurpose()];
 
     return ListTile(
       title: Text(trailingText == null ? consRefAllModes[index] : consRefAllModes[index] + trailingText),
       onTap: isSelected ? null : ()  {
-
-        changeConRefAllState(index: index);
-
-        dismissDialog(dialogVar: dialog);
+        setState(() {
+          changePurposeState(index: index);
+        });
+        dialog.dissmiss();
       },
-      trailing: isSelected ? Icon(Icons.radio_button_checked) : Icon(Icons.radio_button_unchecked),
+      trailing: isSelected ? Icon(Icons.radio_button_checked) : Icon(Icons.radio_button_unchecked)
     );
   }
 
@@ -128,8 +125,23 @@ class _SearchState extends State<Search> {
     dialog.show();
   }
 
+  updateSortOrder(order) {
+    setState(() {
+      searchConfig.setSortOrder(order);
+    });
+  }
+
   void tapDateTimeSortToggle() {
     print('DateTimeSaved toggle');
+
+    dialog = OptionModal(context: context,
+        title: 'Sort Order',
+        options: SearchConfig.sortOrderOptions,
+        selectedIndex: searchConfig.getSelectedSortOrder(),
+        f: updateSortOrder
+    );
+
+    dialog.show();
   }
 
   /*Container( // was assigned to the above AwesomeDialog's body property
@@ -253,9 +265,9 @@ class _SearchState extends State<Search> {
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: <Widget>[
-                        buildHorizontalOptionButton(title: consRefAllModes[searchConfig.getConfRefAllMode()], f: this.tapConsumptionVsReferenceToggle, isOn: true),
+                        buildHorizontalOptionButton(title: searchConfig.getSelectedPurposeOption(), f: this.tapConsumptionVsReferenceToggle, isOn: true),
                         SizedBox(width: 10),
-                        buildHorizontalOptionButton(title: 'Newest to Oldest', f: this.tapDateTimeSortToggle, isOn: true),
+                        buildHorizontalOptionButton(title: searchConfig.getSelectedSortOrderOption(), f: this.tapDateTimeSortToggle, isOn: true),
                         SizedBox (width: 10),
                         buildHorizontalOptionButton(title: 'Tag', f: this.tapTagSelector, isOn: this.isTagSelectorOn),
                         SizedBox (width: 10),

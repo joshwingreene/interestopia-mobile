@@ -4,9 +4,11 @@ class SearchConfig {
   static const int CONSUMPTION = 0;
   static const int REFERENCE = 1;
   static const int ALL = 2;
+  static List<String> purposeOptions = ['For Consumption', 'For Reference', 'All Items (both options)'];
 
   static const int NEWEST_FIRST = 0;
   static const int OLDEST_FIRST = 1;
+  static List<String> sortOrderOptions = ['Newest to Oldest', 'Oldest to Newest'];
 
   static const int WEB_PAGE = 0;
   static const int ONLINE_VIDEO = 1;
@@ -16,7 +18,7 @@ class SearchConfig {
   static const int NEWSLETTER = 5;
 
   // Fields
-  int _consRefAllMode;
+  int _selectedPurpose;
   int _sortOrder;
   List<String> _selectedTags = [];
   String _selectedTopic;
@@ -25,15 +27,31 @@ class SearchConfig {
   bool _onlyArchived = false;
 
   SearchConfig() {
-    _consRefAllMode = CONSUMPTION;
+    _selectedPurpose = CONSUMPTION;
     _sortOrder = NEWEST_FIRST;
   }
 
-  void changeConfRefAllMode({ int mode }) {
-    _consRefAllMode = mode;
+  void changePurposeMode({ int mode }) {
+    _selectedPurpose = mode;
   }
 
-  int getConfRefAllMode() {
-    return _consRefAllMode;
+  int getCurrentPurpose() {
+    return _selectedPurpose;
+  }
+
+  String getSelectedPurposeOption() {
+    return purposeOptions[getCurrentPurpose()];
+  }
+
+  int getSelectedSortOrder() {
+    return _sortOrder;
+  }
+
+  String getSelectedSortOrderOption() {
+    return sortOrderOptions[_selectedPurpose];
+  }
+
+  void setSortOrder(order) {
+    _sortOrder = order;
   }
 }

@@ -215,11 +215,11 @@ class _SearchBarAreaState extends State<SearchBarArea> {
     List<SavedItem> result;
 
     // ConsRefAll Selector
-    if (widget.currentSearchConfig.getConfRefAllMode() == SearchConfig.CONSUMPTION) {
+    if (widget.currentSearchConfig.getCurrentPurpose() == SearchConfig.CONSUMPTION) {
       result = savedItems.where((item) => item.consumptionOrReference == 'consumption').toList();
-    } else if (widget.currentSearchConfig.getConfRefAllMode() == SearchConfig.REFERENCE) {
+    } else if (widget.currentSearchConfig.getCurrentPurpose() == SearchConfig.REFERENCE) {
       result = savedItems.where((item) => item.consumptionOrReference == 'reference').toList();
-    } else if (widget.currentSearchConfig.getConfRefAllMode() == SearchConfig.ALL) {
+    } else if (widget.currentSearchConfig.getCurrentPurpose() == SearchConfig.ALL) {
       result = savedItems;
     }
 
