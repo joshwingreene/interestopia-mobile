@@ -223,7 +223,12 @@ class _SearchBarAreaState extends State<SearchBarArea> {
       result = savedItems;
     }
 
-    // TODO - Date Time Sort Order Selector (also sorted in desc order will pulling from the database)
+    // Date Time Sort Order Selector (also sorted in desc order will pulling from the database)
+    if (widget.currentSearchConfig.getSelectedSortOrder() == SearchConfig.NEWEST_FIRST) {
+      // do nothing since this is the default
+    } else if (widget.currentSearchConfig.getSelectedSortOrder() == SearchConfig.OLDEST_FIRST) {
+      result.sort((a, b) => a.dateTimeSaved.compareTo(b.dateTimeSaved)); // puts older dates first since compareTo on DateTime will return a -1 if it is before/older than b
+    }
 
     // TODO - Tag Selector
 
