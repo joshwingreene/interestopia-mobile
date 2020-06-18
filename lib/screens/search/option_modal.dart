@@ -63,23 +63,4 @@ class OptionModal {
         trailing: isSelected ? Icon(Icons.radio_button_checked) : Icon(Icons.radio_button_unchecked)
     );
   }
-
-  /*
-  ListTile buildOptionListItem({ int index, String trailingText }) {
-
-    bool isSelected = consRefAllModes[index] == consRefAllModes[searchConfig.getConfRefAllMode()];
-
-    return ListTile(
-        title: Text(trailingText == null ? consRefAllModes[index] : consRefAllModes[index] + trailingText),
-        onTap: isSelected ? null : ()  {
-
-          changeConRefAllState(index: index);
-
-          dialog.dissmiss();
-        },
-        trailing: isSelected ? Icon(Icons.radio_button_checked) : Icon(Icons.radio_button_unchecked)
-    );
-  }
-   */
-
 }

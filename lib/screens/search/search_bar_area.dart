@@ -208,7 +208,7 @@ class _SearchBarAreaState extends State<SearchBarArea> {
     );
   }
   
-  List<SavedItem> changeResult({ List<SavedItem> savedItems }) {
+  List<SavedItem> changeResult({ List<SavedItem> savedItems }) { // TODO: Don't use where separately for the dif selections (don't want to recreate lists multiple times!)
 
     //print('changeResult - mode - ' + widget.currentSearchConfig.getConfRefAllMode().toString());
 

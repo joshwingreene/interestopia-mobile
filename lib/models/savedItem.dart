@@ -7,7 +7,7 @@ class SavedItem {
   String description;
   String topic;
   String consumptionOrReference; // new
-  String mediaType; // new
+  String mediaType; // new // TODO - Thinking about making this an int, especially with what I'm doing in SearchConfig
   List<dynamic> associatedTagIds; // new
   double progressAmount; // new
   bool isArchived; // new

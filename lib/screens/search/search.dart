@@ -9,7 +9,6 @@ import 'package:interestopia/screens/search/search_bar_area.dart';
 import 'package:interestopia/services/database.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
 
 class Search extends StatefulWidget {
 
@@ -26,7 +25,6 @@ class _SearchState extends State<Search> {
   User user;
   dynamic docStream;
 
-  List<String> consRefAllModes = ['For Consumption', 'For Reference', 'All Items'];
   SearchConfig searchConfig = SearchConfig();
 
   bool isTagSelectorOn = false;
@@ -35,7 +33,7 @@ class _SearchState extends State<Search> {
   bool isFavoritedToggleOn = false;
   bool isArchivedToggleOn = false;
 
-  var dialog;
+  OptionModal dialog;
 
   @override
   void initState() {
@@ -59,73 +57,47 @@ class _SearchState extends State<Search> {
     super.dispose();
   }
 
-  void changePurposeState({ int index }) {
+  void changePurposeState( int index ) {
 
-    //print(options[index] + ' button tapped');
-
-    if (consRefAllModes[index] == 'For Consumption') {
-      print('for consumption');
-      setState(() {
-        searchConfig.changePurposeMode(mode: 0);
-      });
-    } else if (consRefAllModes[index] == 'For Reference') {
-      print('for reference');
-      setState(() {
-        searchConfig.changePurposeMode(mode: 1);
-      });
-    } else {
-      print('all items');
-      setState(() {
-        searchConfig.changePurposeMode(mode: 2);
-      });
+    switch(index) {
+      case SearchConfig.CONSUMPTION:
+        //print('for consumption');
+        setState(() {
+          searchConfig.changePurposeMode(SearchConfig.CONSUMPTION);
+        });
+        break;
+      case SearchConfig.REFERENCE:
+        //print('for reference');
+        setState(() {
+          searchConfig.changePurposeMode(SearchConfig.REFERENCE);
+        });
+        break;
+      case SearchConfig.ALL:
+        //print('all items');
+        setState(() {
+          searchConfig.changePurposeMode(SearchConfig.ALL);
+        });
+        break;
+      default:
+        return;
     }
   }
 
-  ListTile buildOptionListItem({ int index, String trailingText }) {
-
-    bool isSelected = consRefAllModes[index] == consRefAllModes[searchConfig.getCurrentPurpose()];
-
-    return ListTile(
-      title: Text(trailingText == null ? consRefAllModes[index] : consRefAllModes[index] + trailingText),
-      onTap: isSelected ? null : ()  {
-        setState(() {
-          changePurposeState(index: index);
-        });
-        dialog.dissmiss();
-      },
-      trailing: isSelected ? Icon(Icons.radio_button_checked) : Icon(Icons.radio_button_unchecked)
-    );
-  }
-
   void tapConsumptionVsReferenceToggle() {
-    print('For Consumption vs Reference vs All toggle'); // Don't forget that users will be able to select an All/Both option as well
+    print('For Consumption vs Reference vs All toggle');
 
-    dialog = AwesomeDialog(
+    dialog = OptionModal(
       context: context,
-      useRootNavigator: true,
-      headerAnimationLoop: false,
-      dialogType: DialogType.NO_HEADER,
-      body: Column(
-        children: <Widget>[
-          Text('Filter by Purpose',
-            style: TextStyle(
-              color: Colors.deepPurpleAccent,
-              fontWeight: FontWeight.bold,
-              fontSize: 18
-            )),
-          buildOptionListItem(index: SearchConfig.CONSUMPTION),
-          Divider(),
-          buildOptionListItem(index: SearchConfig.REFERENCE),
-          Divider(),
-          buildOptionListItem(index: SearchConfig.ALL, trailingText: ' (show both)')
-        ],
-      )
+      title: 'Filter by Purpose',
+      options: SearchConfig.purposeOptions,
+      selectedIndex: searchConfig.getCurrentPurpose(),
+      f: changePurposeState
     );
 
     dialog.show();
   }
 
-  updateSortOrder(order) {
+  updateSortOrder(int order) {
     setState(() {
       searchConfig.setSortOrder(order);
     });

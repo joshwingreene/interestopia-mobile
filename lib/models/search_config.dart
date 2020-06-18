@@ -31,7 +31,7 @@ class SearchConfig {
     _sortOrder = NEWEST_FIRST;
   }
 
-  void changePurposeMode({ int mode }) {
+  void changePurposeMode(mode) {
     _selectedPurpose = mode;
   }
 
