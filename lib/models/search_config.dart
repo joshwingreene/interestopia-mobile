@@ -40,7 +40,7 @@ class SearchConfig {
   }
 
   String getSelectedPurposeOption() {
-    return purposeOptions[getCurrentPurpose()];
+    return purposeOptions[_selectedPurpose];
   }
 
   int getSelectedSortOrder() {
@@ -48,7 +48,7 @@ class SearchConfig {
   }
 
   String getSelectedSortOrderOption() {
-    return sortOrderOptions[_selectedPurpose];
+    return sortOrderOptions[_sortOrder];
   }
 
   void setSortOrder(order) {

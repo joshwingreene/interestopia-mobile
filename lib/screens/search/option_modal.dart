@@ -54,15 +54,10 @@ class OptionModal {
 
   ListTile buildOptionListItem({ int index, String text, bool isSelected, Function f }) {
 
-    //bool isSelected = consRefAllModes[index] == consRefAllModes[searchConfig.getConfRefAllMode()];
-
     return ListTile(
         title: Text(text),
         onTap: isSelected ? null : ()  {
-
-          //changeConRefAllState(index: index);
           f(index);
-
           dismiss();
         },
         trailing: isSelected ? Icon(Icons.radio_button_checked) : Icon(Icons.radio_button_unchecked)
