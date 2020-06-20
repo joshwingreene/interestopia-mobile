@@ -21,7 +21,7 @@ class SearchConfig {
   int _selectedPurpose;
   int _sortOrder;
   List<String> _selectedTags = [];
-  String _selectedTopic;
+  int _selectedTopicIndex;
   int _mediaType;
   bool _onlyFavorites = false;
   bool _onlyArchived = false;
@@ -53,5 +53,13 @@ class SearchConfig {
 
   void setSortOrder(order) {
     _sortOrder = order;
+  }
+
+  void setSelectedTopicIndex(index) {
+    _selectedTopicIndex = index;
+  }
+
+  int getSelectedTopicIndex() {
+    return _selectedTopicIndex;
   }
 }

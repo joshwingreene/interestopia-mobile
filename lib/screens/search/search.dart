@@ -7,8 +7,10 @@ import 'package:interestopia/models/user.dart';
 import 'package:interestopia/screens/search/option_modal.dart';
 import 'package:interestopia/screens/search/search_bar_area.dart';
 import 'package:interestopia/services/database.dart';
+import 'package:interestopia/shared/measure_size.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:interestopia/shared/constants.dart';
 
 class Search extends StatefulWidget {
 
@@ -34,6 +36,7 @@ class _SearchState extends State<Search> {
   bool isArchivedToggleOn = false;
 
   OptionModal dialog;
+  double safeAreaHeight;
 
   @override
   void initState() {
@@ -89,6 +92,7 @@ class _SearchState extends State<Search> {
     dialog = OptionModal(
       context: context,
       title: 'Filter by Purpose',
+      listType: OptionModal.NON_SCROLLABLE_LIST,
       options: SearchConfig.purposeOptions,
       selectedIndex: searchConfig.getCurrentPurpose(),
       f: changePurposeState
@@ -108,6 +112,7 @@ class _SearchState extends State<Search> {
 
     dialog = OptionModal(context: context,
         title: 'Sort Order',
+        listType: OptionModal.NON_SCROLLABLE_LIST,
         options: SearchConfig.sortOrderOptions,
         selectedIndex: searchConfig.getSelectedSortOrder(),
         f: updateSortOrder
@@ -116,26 +121,7 @@ class _SearchState extends State<Search> {
     dialog.show();
   }
 
-  /*Container( // was assigned to the above AwesomeDialog's body property
-        height: 200, // TODO: Use MeasureSize in order to get the height of the SafeArea and use it to know how big this dialog should be
-        child: ListView.separated(
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                  title: Text(consRefAllModes[index]),
-                  onTap: consRefAllModes[index] == consRefAllModes[searchConfig.getConfRefAllMode()] ? null : ()  {
-
-                    changeConRefAllState(index: index);
-
-                    dismissDialog(dialogVar: dialog);
-                  },
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) => Divider(),
-            itemCount: consRefAllModes.length,
-        ),
-      ), */
-
-  void tapTagSelector() { // Should support multiple tags being selected // TODO - (left the commented out code above for reference) Will need to use a container and a height around the tags listview
+  void tapTagSelector() { // Should support multiple tags being selected
     print('Tag Selector button');
     setState(() {
       isTagSelectorOn = !isTagSelectorOn;
@@ -144,8 +130,28 @@ class _SearchState extends State<Search> {
 
   void tapTopicSelector() { // Only support one topic being selected
     print('Topic Selector button');
+
+    print('screenHeight: ' + safeAreaHeight.toString());
+
+    dialog = OptionModal(
+      context: context,
+      title: 'Filter by Topic',
+      listType: OptionModal.SCROLLABLE_LIST,
+      options: topicList.map((topic) => topic.title).toList(),
+      selectedIndex: searchConfig.getSelectedTopicIndex(),
+      screenHeight: safeAreaHeight,
+      f: updateSelectedTopic
+    );
+
+    dialog.show();
+  }
+
+  updateSelectedTopic(int topicIndex) {
+    print('updateSelectedTopic');
+
     setState(() {
-      isTopicSelectorOn = !isTopicSelectorOn;
+      searchConfig.setSelectedTopicIndex(topicIndex);
+      isTopicSelectorOn = topicIndex != null;
     });
   }
 
@@ -227,39 +233,47 @@ class _SearchState extends State<Search> {
               brightness: Theme.of(context).brightness,
             ),
           ),
-          body: SafeArea(
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-                  child: Container(
-                    height: 50,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: <Widget>[
-                        buildHorizontalOptionButton(title: searchConfig.getSelectedPurposeOption(), f: this.tapConsumptionVsReferenceToggle, isOn: true),
-                        SizedBox(width: 10),
-                        buildHorizontalOptionButton(title: searchConfig.getSelectedSortOrderOption(), f: this.tapDateTimeSortToggle, isOn: true),
-                        SizedBox (width: 10),
-                        buildHorizontalOptionButton(title: 'Tag', f: this.tapTagSelector, isOn: this.isTagSelectorOn),
-                        SizedBox (width: 10),
-                        buildHorizontalOptionButton(title: 'Topic', f: this.tapTopicSelector, isOn: this.isTopicSelectorOn),
-                        SizedBox (width: 10),
-                        buildHorizontalOptionButton(title: 'Media Type', f: this.tapMediaTypeSelector, isOn: this.isMediaTypeSelectorOn),
-                        SizedBox (width: 10),
-                        buildSquareHorizontalOptionButton(icon: Icons.star, f: this.tapFavoritedToggle, currentlyBeingUsed: isFavoritedToggleOn),
-                        SizedBox (width: 10),
-                        buildSquareHorizontalOptionButton(icon: Icons.check, f: this.tapArchivedToggle, currentlyBeingUsed: isArchivedToggleOn),
-                        SizedBox (width: 13)
-                      ],
-                    )
+          body: MeasureSize(
+            onChange: (size) {
+              print('SafeArea height: ' + size.height.toString());
+              setState(() {
+                safeAreaHeight = size.height;
+              });
+            },
+            child: SafeArea(
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                    child: Container(
+                      height: 50,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: <Widget>[
+                          buildHorizontalOptionButton(title: searchConfig.getSelectedPurposeOption(), f: this.tapConsumptionVsReferenceToggle, isOn: true),
+                          SizedBox(width: 10),
+                          buildHorizontalOptionButton(title: searchConfig.getSelectedSortOrderOption(), f: this.tapDateTimeSortToggle, isOn: true),
+                          SizedBox (width: 10),
+                          buildHorizontalOptionButton(title: 'Tag', f: this.tapTagSelector, isOn: this.isTagSelectorOn),
+                          SizedBox (width: 10),
+                          buildHorizontalOptionButton(title: searchConfig.getSelectedTopicIndex() == null ? 'Topic' : topicList[searchConfig.getSelectedTopicIndex()].title, f: this.tapTopicSelector, isOn: this.isTopicSelectorOn),
+                          SizedBox (width: 10),
+                          buildHorizontalOptionButton(title: 'Media Type', f: this.tapMediaTypeSelector, isOn: this.isMediaTypeSelectorOn),
+                          SizedBox (width: 10),
+                          buildSquareHorizontalOptionButton(icon: Icons.star, f: this.tapFavoritedToggle, currentlyBeingUsed: isFavoritedToggleOn),
+                          SizedBox (width: 10),
+                          buildSquareHorizontalOptionButton(icon: Icons.check, f: this.tapArchivedToggle, currentlyBeingUsed: isArchivedToggleOn),
+                          SizedBox (width: 13)
+                        ],
+                      )
+                    ),
                   ),
-                ),
-                Expanded( // The quick, baby pool fix is to change the mainAxisSize of theRow/Column to MainAxisSize.min, then wrap the child that wants to be infinitely large in an Expanded. - https://medium.com/flutter-community/flutter-deep-dive-part-1-renderflex-children-have-non-zero-flex-e25ffcf7c272
-                  flex: 15,
-                  child: SearchBarArea(currentSearchConfig: searchConfig)
-                ),
-              ],
+                  Expanded( // The quick, baby pool fix is to change the mainAxisSize of theRow/Column to MainAxisSize.min, then wrap the child that wants to be infinitely large in an Expanded. - https://medium.com/flutter-community/flutter-deep-dive-part-1-renderflex-children-have-non-zero-flex-e25ffcf7c272
+                    flex: 15,
+                    child: SearchBarArea(currentSearchConfig: searchConfig)
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -5,7 +5,7 @@ import 'package:interestopia/models/topic_with_index_bundle.dart';
 class TopicSelectorManager {
 
   int selectedTopicIndex;
-  List<Topic_UI_Model> topicList = [
+  List<Topic_UI_Model> topicList = [ // copied this to constants for now since I think I will be removing this manager
     Topic_UI_Model(icon: Icons.brush, title: 'Arts'),
     Topic_UI_Model(icon: Icons.business, title: 'Business'),
     Topic_UI_Model(icon: Icons.create, title: 'Design'),
@@ -13,7 +13,7 @@ class TopicSelectorManager {
     Topic_UI_Model(icon: Icons.shopping_basket, title: 'Fashion'),
     Topic_UI_Model(icon: Icons.monetization_on, title: 'Finance'),
     Topic_UI_Model(icon: Icons.fastfood, title: 'Food'),
-    Topic_UI_Model(icon: Icons.hourglass_empty, title: 'Govt'),
+    Topic_UI_Model(icon: Icons.hourglass_empty, title: 'Government'),
     Topic_UI_Model(icon: Icons.healing, title: 'Health'),
     Topic_UI_Model(icon: Icons.brush, title: 'Leisure'),
     Topic_UI_Model(icon: Icons.brush, title: 'News'),

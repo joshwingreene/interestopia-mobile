@@ -3,6 +3,7 @@ import 'package:interestopia/models/savedItem.dart';
 import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:interestopia/models/search_config.dart';
 import 'package:interestopia/models/tag.dart';
+import 'package:interestopia/shared/constants.dart';
 import 'package:interestopia/shared/measure_size.dart';
 import 'package:provider/provider.dart';
 
@@ -207,21 +208,46 @@ class _SearchBarAreaState extends State<SearchBarArea> {
       ),
     );
   }
-  
-  List<SavedItem> changeResult({ List<SavedItem> savedItems }) { // TODO: Don't use where separately for the dif selections (don't want to recreate lists multiple times!)
 
-    //print('changeResult - mode - ' + widget.currentSearchConfig.getConfRefAllMode().toString());
+  bool checkIfItemHasPurpose({ SavedItem item, int purposeState }) {
 
-    List<SavedItem> result;
+    bool result = false;
 
-    // ConsRefAll Selector
-    if (widget.currentSearchConfig.getCurrentPurpose() == SearchConfig.CONSUMPTION) {
-      result = savedItems.where((item) => item.consumptionOrReference == 'consumption').toList();
-    } else if (widget.currentSearchConfig.getCurrentPurpose() == SearchConfig.REFERENCE) {
-      result = savedItems.where((item) => item.consumptionOrReference == 'reference').toList();
-    } else if (widget.currentSearchConfig.getCurrentPurpose() == SearchConfig.ALL) {
-      result = savedItems;
+    switch (purposeState) {
+      case SearchConfig.CONSUMPTION:
+        result = item.consumptionOrReference == 'consumption';
+        break;
+      case SearchConfig.REFERENCE:
+        result = item.consumptionOrReference == 'reference';
+        break;
+      case SearchConfig.ALL:
+        result = true;
+        break;
     }
+
+    return result;
+  }
+
+  bool checkIfItemHasTopic({ SavedItem item, int selectedTopicIndex }) {
+    return selectedTopicIndex == null ? true : item.topic == topicList[selectedTopicIndex].title;
+  }
+  
+  List<SavedItem> changeResult({ List<SavedItem> savedItems }) {
+
+    List<SavedItem> result = savedItems;
+
+    result = result.where((item) {
+      return checkIfItemHasPurpose(item: item, purposeState: widget.currentSearchConfig.getCurrentPurpose()) &&
+              checkIfItemHasTopic(item: item, selectedTopicIndex: widget.currentSearchConfig.getSelectedTopicIndex()); // TODO - Add more functions as I go along
+    }).toList();
+
+    // TODO - Tag Selector
+
+    // TODO - Media Type Selector
+
+    // TODO - Favorited Toggle
+
+    // TODO - Archived Toggle
 
     // Date Time Sort Order Selector (also sorted in desc order will pulling from the database)
     if (widget.currentSearchConfig.getSelectedSortOrder() == SearchConfig.NEWEST_FIRST) {
@@ -229,16 +255,6 @@ class _SearchBarAreaState extends State<SearchBarArea> {
     } else if (widget.currentSearchConfig.getSelectedSortOrder() == SearchConfig.OLDEST_FIRST) {
       result.sort((a, b) => a.dateTimeSaved.compareTo(b.dateTimeSaved)); // puts older dates first since compareTo on DateTime will return a -1 if it is before/older than b
     }
-
-    // TODO - Tag Selector
-
-    // TODO - Topic Selector
-
-    // TODO - Media Type Selector
-
-    // TODO - Favorited Toggle
-
-    // TODO - Archived Toggle
 
     return result;
   }
