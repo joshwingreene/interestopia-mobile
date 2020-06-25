@@ -20,7 +20,7 @@ class SearchConfig {
   // Fields
   int _selectedPurpose;
   int _sortOrder;
-  List<String> _selectedTags = [];
+  List<dynamic> _selectedTagIds = [];
   int _selectedTopicIndex;
   int _mediaType;
   bool _onlyFavorites = false;
@@ -61,5 +61,13 @@ class SearchConfig {
 
   int getSelectedTopicIndex() {
     return _selectedTopicIndex;
+  }
+
+  void setSelectedTagIds(tagIds) {
+    _selectedTagIds = tagIds;
+  }
+
+  List<dynamic> getSelectedTagIds() {
+    return _selectedTagIds;
   }
 }

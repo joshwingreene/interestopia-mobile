@@ -9,4 +9,9 @@ class Tag {
   int getNumberOfItems() {
     return associatedItemIds.length;
   }
+
+  @override
+  String toString() {
+    return title;
+  }
 }

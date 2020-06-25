@@ -1,5 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:interestopia/models/tag.dart';
 
 
 class OptionModal {
@@ -9,7 +10,11 @@ class OptionModal {
   static const int NON_SCROLLABLE_LIST = 0;
   static const int SCROLLABLE_LIST = 1;
 
-  OptionModal({ BuildContext context, String title, List<String> options, int selectedIndex, int listType, List<int> selectedIndexes, double screenHeight, Function f }) {
+  List<dynamic> selectedTagIds;
+
+  OptionModal({ BuildContext context, String title, List<String> options, List<Tag> tags, int listType, bool isMultiSelectOn, int selectedIndex, List<dynamic> selectedTagIds, double screenHeight, Function f }) {
+
+    this.selectedTagIds = selectedTagIds;
 
     dialog = AwesomeDialog(
         context: context,
@@ -18,8 +23,20 @@ class OptionModal {
         dialogType: DialogType.NO_HEADER,
         body: listType == 0 ?
           _buildOptionList(title: title, options: options, selectedIndex: selectedIndex, f: f) :
-          _buildScrollableOptionList(screenHeight: screenHeight, title: title, options: options, selectedIndex: selectedIndex, f: f),
+          _buildScrollableOptionList(isMultiSelectOn: isMultiSelectOn, screenHeight: screenHeight, title: title, options: options, tags: tags, selectedIndex: selectedIndex, selectedTagIds: selectedTagIds, f: f),
     );
+  }
+
+  void addSelectedId({ String id }) {
+    selectedTagIds.add(id);
+  }
+
+  void removeSelectedId({ String id }) {
+    selectedTagIds.remove(id);
+  }
+
+  bool isTagSelected({ String id }) {
+    return selectedTagIds.contains(id);
   }
 
   show() {
@@ -62,7 +79,50 @@ class OptionModal {
     return result;
   }
 
-  Container _buildScrollableOptionList({ double screenHeight, String title, List<String> options, int selectedIndex, Function f }) {
+  Row _buildBottomRowForMultiSelectionModal({ List<dynamic> selectedTagIds, Function f }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        FlatButton(
+            color: Colors.white,
+            onPressed: selectedTagIds.length == 0 ? null : () {
+              f([]);
+              dismiss();
+            },
+            child: Text(
+              'Reset',
+              style: TextStyle(
+                  color: selectedTagIds.length == 0 ? Colors.grey : Colors.deepPurpleAccent
+              ),
+            ),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+                side: BorderSide(color: selectedTagIds.length == 0 ? Colors.grey : Colors.deepPurpleAccent)
+            )
+        ),
+        SizedBox(width: 10),
+        FlatButton(
+            color: Colors.white,
+            onPressed: selectedTagIds.length == 0 ? null : () {
+              f(selectedTagIds);
+              dismiss();
+            },
+            child: Text(
+              'Confirm',
+              style: TextStyle(
+                  color: Colors.deepPurpleAccent
+              ),
+            ),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+                side: BorderSide(color: Colors.deepPurpleAccent)
+            )
+        )
+      ],
+    );
+  }
+
+  Container _buildScrollableOptionList({ bool isMultiSelectOn, double screenHeight, String title, List<String> options, List<Tag> tags, int selectedIndex, List<dynamic> selectedTagIds, Function f }) {
     return Container(
       height: screenHeight * .40,
       child: Column(
@@ -72,36 +132,67 @@ class OptionModal {
               flex: 2,
               child: ListView.separated(
                 itemBuilder: (BuildContext context, int index) {
-                  return buildOptionListItem(index: index, text: options[index], isSelected: index == selectedIndex, f: f);
+                  bool isDisplayingTags = isMultiSelectOn;
+                  if (!isDisplayingTags) {
+                    return buildOptionListItem(hasCheckBox: isMultiSelectOn, index: index, text: options[index], isSelected: index == selectedIndex, f: f);
+                  } else {
+                    return buildTagListItem(id: tags[index].id, text: tags[index].toString(), isSelected: isTagSelected(id: tags[index].id), f: f);
+                  }
                 },
                 separatorBuilder: (BuildContext context, int index) => Divider(),
-                itemCount: options.length,
+                itemCount: options != null ? options.length : tags.length,
               ),
             ),
             SizedBox(height: 10),
-            FlatButton(
-              color: Colors.white,
-              onPressed: selectedIndex == null ? null : () {
-                f(null);
-                dismiss();
-              },
-              child: Text(
-                  'Reset',
-                  style: TextStyle(
-                    color: selectedIndex == null ? Colors.grey : Colors.deepPurpleAccent
-                  ),
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: BorderSide(color: selectedIndex == null ? Colors.grey : Colors.deepPurpleAccent)
-              )
-            )
+            !isMultiSelectOn ?
+              FlatButton(
+                color: Colors.white,
+                onPressed: selectedIndex == null ? null : () {
+                  f(null);
+                  dismiss();
+                },
+                child: Text(
+                    'Reset',
+                    style: TextStyle(
+                      color: selectedIndex == null ? Colors.grey : Colors.deepPurpleAccent
+                    ),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide(color: selectedIndex == null ? Colors.grey : Colors.deepPurpleAccent)
+                )
+              ) :
+              _buildBottomRowForMultiSelectionModal(selectedTagIds: selectedTagIds, f: f)
         ],
       ),
     );
   }
 
-  ListTile buildOptionListItem({ int index, String text, bool isSelected, Function f }) {
+  Widget getButtonIcon({ bool isCheckBox, bool isSelected }) {
+    if (isCheckBox) {
+      if (isSelected) {
+        return Icon(Icons.check_box);
+      } else {
+        return Icon(Icons.check_box_outline_blank);
+      }
+    } else {
+      if (isSelected) {
+        return Icon(Icons.radio_button_checked);
+      } else {
+        return Icon(Icons.radio_button_unchecked);
+      }
+    }
+  }
+
+  ListTile buildTagListItem({ String id, String text, bool isSelected, Function f }) {
+    return ListTile(
+        title: Text(text),
+        onTap: isSelected ? () => removeSelectedId(id: id) : () => addSelectedId(id: id),
+        trailing: getButtonIcon(isCheckBox: true, isSelected: isSelected)
+    );
+  }
+
+  ListTile buildOptionListItem({ bool hasCheckBox, int index, String text, bool isSelected, Function f }) {
 
     return ListTile(
         title: Text(text),
@@ -109,7 +200,7 @@ class OptionModal {
           f(index);
           dismiss();
         },
-        trailing: isSelected ? Icon(Icons.radio_button_checked) : Icon(Icons.radio_button_unchecked)
+        trailing: getButtonIcon(isCheckBox: hasCheckBox, isSelected: isSelected)
     );
   }
 }

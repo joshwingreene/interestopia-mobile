@@ -4,6 +4,7 @@ import 'package:interestopia/models/savedItem.dart';
 import 'package:interestopia/models/search_config.dart';
 import 'package:interestopia/models/tag.dart';
 import 'package:interestopia/models/user.dart';
+import 'package:interestopia/screens/search/horizontal_options_list.dart';
 import 'package:interestopia/screens/search/option_modal.dart';
 import 'package:interestopia/screens/search/search_bar_area.dart';
 import 'package:interestopia/services/database.dart';
@@ -121,10 +122,27 @@ class _SearchState extends State<Search> {
     dialog.show();
   }
 
-  void tapTagSelector() { // Should support multiple tags being selected
+  void tapTagSelector(List<Tag> tags) { // Should support multiple tags being selected
     print('Tag Selector button');
+    dialog = null;
+    dialog = OptionModal(
+        context: context,
+        title: 'Filter by Tag(s)',
+        listType: OptionModal.SCROLLABLE_LIST,
+        isMultiSelectOn: true,
+        tags: tags,
+        selectedTagIds: searchConfig.getSelectedTagIds(),
+        screenHeight: safeAreaHeight,
+        f: updateSelectedTagIds
+    );
+    dialog.show();
+  }
+
+  void updateSelectedTagIds(selectedTagIds) {
+    print('updateSelectedTagIds - selected tag ids: ' + selectedTagIds.toString());
     setState(() {
-      isTagSelectorOn = !isTagSelectorOn;
+      searchConfig.setSelectedTagIds(selectedTagIds);
+      isTagSelectorOn = selectedTagIds.length != 0;
     });
   }
 
@@ -137,6 +155,7 @@ class _SearchState extends State<Search> {
       context: context,
       title: 'Filter by Topic',
       listType: OptionModal.SCROLLABLE_LIST,
+      isMultiSelectOn: false,
       options: topicList.map((topic) => topic.title).toList(),
       selectedIndex: searchConfig.getSelectedTopicIndex(),
       screenHeight: safeAreaHeight,
@@ -146,7 +165,7 @@ class _SearchState extends State<Search> {
     dialog.show();
   }
 
-  updateSelectedTopic(int topicIndex) {
+  void updateSelectedTopic(int topicIndex) {
     print('updateSelectedTopic');
 
     setState(() {
@@ -247,6 +266,22 @@ class _SearchState extends State<Search> {
                     padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
                     child: Container(
                       height: 50,
+                      child: HorizontalOptionsList(
+                        currentSearchConfig: searchConfig,
+                          tapConsumptionVsReferenceToggle: tapConsumptionVsReferenceToggle,
+                          tapDateTimeSortToggle: tapDateTimeSortToggle,
+                          tapTagSelector: tapTagSelector,
+                          tapTopicSelector: tapTopicSelector,
+                          tapMediaTypeSelector: tapMediaTypeSelector,
+                          tapFavoritedToggle: tapFavoritedToggle,
+                          tapArchivedToggle: tapArchivedToggle,
+                          isTagSelectorOn: isTagSelectorOn,
+                          isTopicSelectorOn: isTopicSelectorOn,
+                          isMediaTypeSelectorOn: isMediaTypeSelectorOn,
+                          isFavoritedToggleOn: isFavoritedToggleOn,
+                          isArchivedToggleOn: isArchivedToggleOn
+                      )
+                      /*
                       child: ListView(
                         scrollDirection: Axis.horizontal,
                         children: <Widget>[
@@ -266,6 +301,7 @@ class _SearchState extends State<Search> {
                           SizedBox (width: 13)
                         ],
                       )
+                       */
                     ),
                   ),
                   Expanded( // The quick, baby pool fix is to change the mainAxisSize of theRow/Column to MainAxisSize.min, then wrap the child that wants to be infinitely large in an Expanded. - https://medium.com/flutter-community/flutter-deep-dive-part-1-renderflex-children-have-non-zero-flex-e25ffcf7c272
