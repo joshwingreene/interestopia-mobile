@@ -197,7 +197,7 @@ class _SearchBarAreaState extends State<SearchBarArea> {
                         )
                     ),
                     SizedBox(height: 10),
-                    item.parsedWordCount == null && item.associatedTagIds.length == 0 ? SizedBox(height: 0) : buildRow(itemInfoAreaWidth: itemInfoAreaWidth, timeEstimate: 100, tagIdList: item.associatedTagIds)
+                    item.parsedWordCount == null && item.associatedTagIds.length == 0 || itemInfoAreaWidth == null ? SizedBox(height: 0) : buildRow(itemInfoAreaWidth: itemInfoAreaWidth, timeEstimate: 100, tagIdList: item.associatedTagIds)
                     // TODO: Convert the parsed word count to the average listening or reading time
                   ],
                 ),
@@ -235,6 +235,10 @@ class _SearchBarAreaState extends State<SearchBarArea> {
   bool checkIfItemHasBeenFavoritedIfToggleOn({ bool favoriteState, bool isFilterToggleOn }) {
     return !isFilterToggleOn ? true : favoriteState;
   }
+
+  bool checkIfItemHasBeenArchivedIfToggleOn({ bool archiveState, bool isFilterToggleOn }) {
+    return !isFilterToggleOn ? true : archiveState;
+  }
   
   List<SavedItem> changeResult({ List<SavedItem> savedItems }) {
 
@@ -243,7 +247,8 @@ class _SearchBarAreaState extends State<SearchBarArea> {
     result = result.where((item) { // TODO - Add more functions as I go along // TODO: Update the first two method names to be like the third one
       return checkIfItemHasPurpose(item: item, purposeState: widget.currentSearchConfig.getCurrentPurpose()) &&
               checkIfItemHasTopic(item: item, selectedTopicIndex: widget.currentSearchConfig.getSelectedTopicIndex()) &&
-              checkIfItemHasBeenFavoritedIfToggleOn(favoriteState: item.isFavorited, isFilterToggleOn: widget.currentSearchConfig.getFavoritesFilterState());
+              checkIfItemHasBeenFavoritedIfToggleOn(favoriteState: item.isFavorited, isFilterToggleOn: widget.currentSearchConfig.getFavoritesFilterState()) &&
+              checkIfItemHasBeenArchivedIfToggleOn(archiveState: item.isArchived, isFilterToggleOn: widget.currentSearchConfig.getArchiveFilterState());
     }).toList();
 
     // TODO - Tag Selector

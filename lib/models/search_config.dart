@@ -78,4 +78,12 @@ class SearchConfig {
   bool getFavoritesFilterState() {
     return _onlyFavorites;
   }
+
+  void toggleArchiveFilter() {
+    _onlyArchived = !_onlyArchived;
+  }
+
+  bool getArchiveFilterState() {
+    return _onlyArchived;
+  }
 }

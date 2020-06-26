@@ -63,7 +63,8 @@ class DatabaseService {
           topic: doc.data['topic'] ?? null,
           consumptionOrReference: doc.data['consumptionOrReference'] ?? null,
           associatedTagIds: doc.data['associatedTagIds'] ?? null,
-          isFavorited: doc.data['isFavorited'] ?? false
+          isFavorited: doc.data['isFavorited'] ?? false,
+          isArchived: doc.data['isArchived'] ?? false
       );
     }).toList();
   }

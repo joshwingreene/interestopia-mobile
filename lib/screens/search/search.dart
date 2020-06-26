@@ -191,6 +191,7 @@ class _SearchState extends State<Search> {
   void tapArchivedToggle() {
     print('Archived toggle');
     setState(() {
+      searchConfig.toggleArchiveFilter();
       isArchivedToggleOn = !isArchivedToggleOn;
     });
   }
