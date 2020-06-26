@@ -62,7 +62,8 @@ class DatabaseService {
           description: doc.data['description'] ?? '',
           topic: doc.data['topic'] ?? null,
           consumptionOrReference: doc.data['consumptionOrReference'] ?? null,
-          associatedTagIds: doc.data['associatedTagIds'] ?? null
+          associatedTagIds: doc.data['associatedTagIds'] ?? null,
+          isFavorited: doc.data['isFavorited'] ?? false
       );
     }).toList();
   }
@@ -170,7 +171,9 @@ class DatabaseService {
   /// Temporarily being used on the settings screen
 
   // post saved item
-  void postNewSavedItem({ String title, String url, DateTime dateTimeSaved, String description, String topic, String consumptionOrReference, List<dynamic> associatedTagIds }) async {
+  void postNewSavedItem({
+      String title, String url, DateTime dateTimeSaved, String description,
+      String topic, String consumptionOrReference, List<dynamic> associatedTagIds }) async {
 
     await usersSavedItemCollection.document(url).setData({
       'title': title,
@@ -179,7 +182,10 @@ class DatabaseService {
       'description': description,
       'topic': topic,
       'consumptionOrReference': consumptionOrReference,
-      'associatedTagIds': associatedTagIds
+      'associatedTagIds': associatedTagIds,
+      'mediaType': null,
+      'isFavorited': false,
+      'isArchived': false
     });
 
     // add the item's id to each of the tags that are associated with it

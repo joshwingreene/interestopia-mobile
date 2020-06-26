@@ -231,14 +231,19 @@ class _SearchBarAreaState extends State<SearchBarArea> {
   bool checkIfItemHasTopic({ SavedItem item, int selectedTopicIndex }) {
     return selectedTopicIndex == null ? true : item.topic == topicList[selectedTopicIndex].title;
   }
+
+  bool checkIfItemHasBeenFavoritedIfToggleOn({ bool favoriteState, bool isFilterToggleOn }) {
+    return !isFilterToggleOn ? true : favoriteState;
+  }
   
   List<SavedItem> changeResult({ List<SavedItem> savedItems }) {
 
     List<SavedItem> result = savedItems;
 
-    result = result.where((item) {
+    result = result.where((item) { // TODO - Add more functions as I go along // TODO: Update the first two method names to be like the third one
       return checkIfItemHasPurpose(item: item, purposeState: widget.currentSearchConfig.getCurrentPurpose()) &&
-              checkIfItemHasTopic(item: item, selectedTopicIndex: widget.currentSearchConfig.getSelectedTopicIndex()); // TODO - Add more functions as I go along
+              checkIfItemHasTopic(item: item, selectedTopicIndex: widget.currentSearchConfig.getSelectedTopicIndex()) &&
+              checkIfItemHasBeenFavoritedIfToggleOn(favoriteState: item.isFavorited, isFilterToggleOn: widget.currentSearchConfig.getFavoritesFilterState());
     }).toList();
 
     // TODO - Tag Selector

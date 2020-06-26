@@ -70,4 +70,12 @@ class SearchConfig {
   List<dynamic> getSelectedTagIds() {
     return _selectedTagIds;
   }
+
+  void toggleFavoritesFilter() {
+    _onlyFavorites = !_onlyFavorites;
+  }
+
+  bool getFavoritesFilterState() {
+    return _onlyFavorites;
+  }
 }

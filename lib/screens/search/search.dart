@@ -124,7 +124,6 @@ class _SearchState extends State<Search> {
 
   void tapTagSelector(List<Tag> tags) { // Should support multiple tags being selected
     print('Tag Selector button');
-    dialog = null;
     dialog = OptionModal(
         context: context,
         title: 'Filter by Tag(s)',
@@ -184,6 +183,7 @@ class _SearchState extends State<Search> {
   void tapFavoritedToggle() {
     print('Favorited toggle');
     setState(() {
+      searchConfig.toggleFavoritesFilter();
       isFavoritedToggleOn = !isFavoritedToggleOn;
     });
   }
